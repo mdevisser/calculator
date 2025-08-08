@@ -1,0 +1,6 @@
+git init
+git add index.html
+git commit -m "Initial commit: Simple calculator app"
+git branch -M main
+git remote add origin https://github.com/yourusername/calculator-app.git
+git push -u origin main
