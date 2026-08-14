@@ -1,0 +1,15 @@
+# Gitleaks configuration
+# https://github.com/gitleaks/gitleaks
+
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''\.env\.tpl$''',
+    '''\.env\.example$''',
+    '''env-template\.tpl$''',
+]
