@@ -75,6 +75,14 @@ test('I1: exceeding the budget enumerates nothing and reports not exhaustive', (
   assert.deepEqual(routings, []);
 });
 
+test('I1: a budget exactly equal to the total is fully enumerated, not refused', () => {
+  const perTerminal = [[[0], [1]], [[2], [3], [4]]];
+  const { routings, total, exhaustive } = enumerateRoutings(perTerminal, 6n);
+  assert.equal(total, 6n);
+  assert.equal(exhaustive, true);
+  assert.equal(routings.length, 6);
+});
+
 test('a terminal with no path yields zero routings', () => {
   const { routings, total, exhaustive } = enumerateRoutings([[[0]], []], 1000n);
   assert.equal(total, 0n);
