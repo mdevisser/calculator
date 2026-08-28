@@ -1,0 +1,13 @@
+{
+  "problem": "euler",
+  "candidate": "elkies-1988",
+  "claim": "2682440^4 + 15365639^4 + 18796760^4 = 20615673^4, three fourth powers summing to a fourth power",
+  "expect": "CONFIRMED",
+  "source": {
+    "url": "https://www.ams.org/journals/mcom/1988-51-184/S0025-5718-1988-0930224-9/",
+    "author": "Noam D. Elkies",
+    "date": "1988-10-01",
+    "peerReviewed": true
+  },
+  "data": { "k": "4", "terms": ["2682440", "15365639", "18796760"], "rhs": "20615673" }
+}

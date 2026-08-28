@@ -1,0 +1,13 @@
+{
+  "problem": "euler",
+  "candidate": "negative-true-but-not-a-counterexample",
+  "claim": "control: 3^3 + 4^3 + 5^3 = 6^3 is true but uses k terms, not fewer than k",
+  "expect": "REFUTED",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Euler%27s_sum_of_powers_conjecture",
+    "author": "negative control, classical identity",
+    "date": "2026-08-28",
+    "peerReviewed": false
+  },
+  "data": { "k": "3", "terms": ["3", "4", "5"], "rhs": "6" }
+}

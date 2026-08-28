@@ -1,0 +1,13 @@
+{
+  "problem": "euler",
+  "candidate": "lander-parkin-1966",
+  "claim": "27^5 + 84^5 + 110^5 + 133^5 = 144^5, four fifth powers summing to a fifth power",
+  "expect": "CONFIRMED",
+  "source": {
+    "url": "https://www.ams.org/journals/bull/1966-72-06/S0002-9904-1966-11654-3/",
+    "author": "L. J. Lander and T. R. Parkin",
+    "date": "1966-10-01",
+    "peerReviewed": true
+  },
+  "data": { "k": "5", "terms": ["27", "84", "110", "133"], "rhs": "144" }
+}

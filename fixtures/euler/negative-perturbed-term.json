@@ -1,0 +1,13 @@
+{
+  "problem": "euler",
+  "candidate": "negative-perturbed-term",
+  "claim": "control: Lander-Parkin with one term perturbed, so the identity is false",
+  "expect": "REFUTED",
+  "source": {
+    "url": "https://www.ams.org/journals/bull/1966-72-06/S0002-9904-1966-11654-3/",
+    "author": "negative control, derived from Lander and Parkin 1966",
+    "date": "2026-08-28",
+    "peerReviewed": false
+  },
+  "data": { "k": "5", "terms": ["28", "84", "110", "133"], "rhs": "144" }
+}
