@@ -1,12 +1,116 @@
 globalThis.RESULTS = {
   "tally": {
     "CONFIRMED": 2,
-    "REFUTED": 2,
-    "INDETERMINATE": 0,
+    "REFUTED": 4,
+    "INDETERMINATE": 1,
     "ERROR": 0
   },
   "unexpected": 0,
   "results": [
+    {
+      "fixture": "dgg/negative-broken-flow",
+      "problem": "dgg",
+      "candidate": "negative-broken-flow",
+      "claim": "control: the declared fractional flow does not conserve at an internal node",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://link.springer.com/article/10.1007/s004930050043",
+        "author": "negative control, constructed for this repository",
+        "date": "2026-08-28",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "flow is conserved at every internal node",
+          "pass": false,
+          "expected": "net zero at all internal nodes",
+          "actual": "u (net 1)"
+        },
+        {
+          "name": "source emits exactly the total demand",
+          "pass": true,
+          "expected": "-3",
+          "actual": "-3"
+        },
+        {
+          "name": "every terminal receives exactly its demand",
+          "pass": false,
+          "expected": "all terminals satisfied",
+          "actual": "t1 (got 2, needs 3)"
+        }
+      ],
+      "requiresSearch": true,
+      "exhaustive": false,
+      "searched": null,
+      "verdict": "REFUTED",
+      "conjecture": "Goemans' cost conjecture on single-source unsplittable flow. The Dinitz-Garg-Goemans theorem (1999) is proven and not in question: given a feasible fractional flow x, an unsplittable routing always exists with y_a <= x_a + D on every arc, where D is the largest single demand. Goemans conjectured that such a routing can also be no more expensive than x. Only that cost strengthening is refuted.",
+      "asExpected": true
+    },
+    {
+      "fixture": "dgg/rybin-2026",
+      "problem": "dgg",
+      "candidate": "rybin-2026",
+      "claim": "fractional cost 58; every congestion-good unsplittable routing costs at least 60",
+      "expect": "INDETERMINATE",
+      "source": {
+        "url": "https://x.com/basedjensen/status/2080020575968543230",
+        "author": "Dmitry Rybin with GPT-5.6 Pro",
+        "date": "2026-07-22",
+        "peerReviewed": false
+      },
+      "checks": [],
+      "requiresSearch": null,
+      "exhaustive": null,
+      "searched": null,
+      "verdict": "INDETERMINATE",
+      "reason": "missing-source-data",
+      "asExpected": true
+    },
+    {
+      "fixture": "dgg/synthetic-conjecture-holds",
+      "problem": "dgg",
+      "candidate": "synthetic-conjecture-holds",
+      "claim": "control: a valid instance on which Goemans' cost conjecture holds, so no counterexample is present",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://link.springer.com/article/10.1007/s004930050043",
+        "author": "synthetic control, constructed for this repository",
+        "date": "2026-08-28",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "flow is conserved at every internal node",
+          "pass": true,
+          "expected": "net zero at all internal nodes",
+          "actual": "net zero at all internal nodes"
+        },
+        {
+          "name": "source emits exactly the total demand",
+          "pass": true,
+          "expected": "-5",
+          "actual": "-5"
+        },
+        {
+          "name": "every terminal receives exactly its demand",
+          "pass": true,
+          "expected": "all terminals satisfied",
+          "actual": "all terminals satisfied"
+        },
+        {
+          "name": "every congestion-good routing costs more than the fractional flow",
+          "pass": false,
+          "expected": "> 10",
+          "actual": "10"
+        }
+      ],
+      "requiresSearch": true,
+      "exhaustive": true,
+      "searched": 1,
+      "verdict": "REFUTED",
+      "conjecture": "Goemans' cost conjecture on single-source unsplittable flow. The Dinitz-Garg-Goemans theorem (1999) is proven and not in question: given a feasible fractional flow x, an unsplittable routing always exists with y_a <= x_a + D on every arc, where D is the largest single demand. Goemans conjectured that such a routing can also be no more expensive than x. Only that cost strengthening is refuted.",
+      "asExpected": true
+    },
     {
       "fixture": "euler/elkies-1988",
       "problem": "euler",

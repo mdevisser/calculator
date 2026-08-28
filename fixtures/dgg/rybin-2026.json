@@ -1,0 +1,13 @@
+{
+  "problem": "dgg",
+  "candidate": "rybin-2026",
+  "claim": "fractional cost 58; every congestion-good unsplittable routing costs at least 60",
+  "expect": "INDETERMINATE",
+  "status": "unsourced",
+  "source": {
+    "url": "https://x.com/basedjensen/status/2080020575968543230",
+    "author": "Dmitry Rybin with GPT-5.6 Pro",
+    "date": "2026-07-22",
+    "peerReviewed": false
+  }
+}

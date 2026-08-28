@@ -1,0 +1,25 @@
+{
+  "problem": "dgg",
+  "candidate": "synthetic-conjecture-holds",
+  "claim": "control: a valid instance on which Goemans' cost conjecture holds, so no counterexample is present",
+  "expect": "REFUTED",
+  "source": {
+    "url": "https://link.springer.com/article/10.1007/s004930050043",
+    "author": "synthetic control, constructed for this repository",
+    "date": "2026-08-28",
+    "peerReviewed": false
+  },
+  "data": {
+    "source": "s",
+    "nodes": ["s", "u", "t1", "t2"],
+    "arcs": [
+      { "from": "s", "to": "u", "cost": "1", "flow": "3" },
+      { "from": "u", "to": "t1", "cost": "1", "flow": "3" },
+      { "from": "s", "to": "t2", "cost": "2", "flow": "2" }
+    ],
+    "terminals": [
+      { "node": "t1", "demand": "3" },
+      { "node": "t2", "demand": "2" }
+    ]
+  }
+}
