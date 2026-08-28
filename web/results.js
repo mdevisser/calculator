@@ -1,8 +1,8 @@
 globalThis.RESULTS = {
-  "generatedAt": "2026-08-28T20:53:48.365Z",
+  "generatedAt": "2026-08-28T20:56:59.073Z",
   "tally": {
-    "CONFIRMED": 1,
-    "REFUTED": 0,
+    "CONFIRMED": 2,
+    "REFUTED": 2,
     "INDETERMINATE": 0,
     "ERROR": 0
   },
@@ -45,7 +45,127 @@ globalThis.RESULTS = {
       "searched": null,
       "verdict": "CONFIRMED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
-      "elapsedMs": 0.169292,
+      "elapsedMs": 0.169166,
+      "asExpected": true
+    },
+    {
+      "fixture": "euler/lander-parkin-1966",
+      "problem": "euler",
+      "candidate": "lander-parkin-1966",
+      "claim": "27^5 + 84^5 + 110^5 + 133^5 = 144^5, four fifth powers summing to a fifth power",
+      "expect": "CONFIRMED",
+      "source": {
+        "url": "https://www.ams.org/journals/bull/1966-72-06/S0002-9904-1966-11654-3/",
+        "author": "L. J. Lander and T. R. Parkin",
+        "date": "1966-10-01",
+        "peerReviewed": true
+      },
+      "checks": [
+        {
+          "name": "exponent is at least 3",
+          "pass": true,
+          "expected": "k >= 3",
+          "actual": "k = 5"
+        },
+        {
+          "name": "uses fewer than k terms",
+          "pass": true,
+          "expected": "at most 4 terms",
+          "actual": "4 terms"
+        },
+        {
+          "name": "sum of k-th powers equals the k-th power",
+          "pass": true,
+          "expected": "61917364224",
+          "actual": "61917364224"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "verdict": "CONFIRMED",
+      "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
+      "elapsedMs": 0.018,
+      "asExpected": true
+    },
+    {
+      "fixture": "euler/negative-perturbed-term",
+      "problem": "euler",
+      "candidate": "negative-perturbed-term",
+      "claim": "control: Lander-Parkin with one term perturbed, so the identity is false",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://www.ams.org/journals/bull/1966-72-06/S0002-9904-1966-11654-3/",
+        "author": "negative control, derived from Lander and Parkin 1966",
+        "date": "2026-08-28",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "exponent is at least 3",
+          "pass": true,
+          "expected": "k >= 3",
+          "actual": "k = 5"
+        },
+        {
+          "name": "uses fewer than k terms",
+          "pass": true,
+          "expected": "at most 4 terms",
+          "actual": "4 terms"
+        },
+        {
+          "name": "sum of k-th powers equals the k-th power",
+          "pass": false,
+          "expected": "61917364224",
+          "actual": "61920225685"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "verdict": "REFUTED",
+      "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
+      "elapsedMs": 0.00975,
+      "asExpected": true
+    },
+    {
+      "fixture": "euler/negative-true-but-not-a-counterexample",
+      "problem": "euler",
+      "candidate": "negative-true-but-not-a-counterexample",
+      "claim": "control: 3^3 + 4^3 + 5^3 = 6^3 is true but uses k terms, not fewer than k",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://en.wikipedia.org/wiki/Euler%27s_sum_of_powers_conjecture",
+        "author": "negative control, classical identity",
+        "date": "2026-08-28",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "exponent is at least 3",
+          "pass": true,
+          "expected": "k >= 3",
+          "actual": "k = 3"
+        },
+        {
+          "name": "uses fewer than k terms",
+          "pass": false,
+          "expected": "at most 2 terms",
+          "actual": "3 terms"
+        },
+        {
+          "name": "sum of k-th powers equals the k-th power",
+          "pass": true,
+          "expected": "216",
+          "actual": "216"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "verdict": "REFUTED",
+      "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
+      "elapsedMs": 0.007708,
       "asExpected": true
     }
   ]
