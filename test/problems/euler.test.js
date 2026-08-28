@@ -55,3 +55,27 @@ test('malformed data throws FixtureError rather than returning a verdict', async
   assert.throws(() => verify({ ...fixture, data: { k: '5', terms: 'not-an-array', rhs: '144' } }), FixtureError);
   assert.throws(() => verify({ ...fixture, data: { k: '5', terms: [], rhs: '144' } }), FixtureError);
 });
+
+test('a numeric k (not a string) is malformed', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const bad = { ...fixture, data: { k: 5, terms: ['27', '84', '110', '133'], rhs: '144' } };
+  assert.throws(() => verify(bad), (e) => e instanceof FixtureError && e.code === 'malformed');
+});
+
+test('a non-numeric rhs is malformed', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const bad = { ...fixture, data: { k: '5', terms: ['27', '84', '110', '133'], rhs: 'abc' } };
+  assert.throws(() => verify(bad), (e) => e instanceof FixtureError && e.code === 'malformed');
+});
+
+test('a non-numeric term is malformed', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const bad = { ...fixture, data: { k: '5', terms: ['abc', '84', '110', '133'], rhs: '144' } };
+  assert.throws(() => verify(bad), (e) => e instanceof FixtureError && e.code === 'malformed');
+});
+
+test('a missing data object is malformed', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const bad = { ...fixture, data: undefined };
+  assert.throws(() => verify(bad), (e) => e instanceof FixtureError && e.code === 'malformed');
+});

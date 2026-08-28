@@ -1,5 +1,5 @@
 import { toBigIntStrict, ipow } from '../../exact/integer.js';
-import { VERDICT, decide } from '../../harness/verdict.js';
+import { decide } from '../../harness/verdict.js';
 import { FixtureError } from '../../harness/schema.js';
 
 export const problem = 'euler';
@@ -10,15 +10,28 @@ export const conjecture =
   'and for k = 4 by Elkies (1988).';
 
 export function verify(fixture) {
-  const { k: kRaw, terms: termsRaw, rhs: rhsRaw } = fixture.data;
+  const data = fixture && fixture.data;
+  if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+    throw new FixtureError('data must be an object', 'malformed');
+  }
+
+  const { k: kRaw, terms: termsRaw, rhs: rhsRaw } = data;
 
   if (!Array.isArray(termsRaw) || termsRaw.length === 0) {
     throw new FixtureError('data.terms must be a non-empty array', 'malformed');
   }
 
-  const k = toBigIntStrict(kRaw, 'data.k');
-  const terms = termsRaw.map((term, i) => toBigIntStrict(term, `data.terms[${i}]`));
-  const rhs = toBigIntStrict(rhsRaw, 'data.rhs');
+  let k, terms, rhs;
+  try {
+    k = toBigIntStrict(kRaw, 'data.k');
+    terms = termsRaw.map((term, i) => toBigIntStrict(term, `data.terms[${i}]`));
+    rhs = toBigIntStrict(rhsRaw, 'data.rhs');
+  } catch (err) {
+    if (err instanceof TypeError || err instanceof RangeError) {
+      throw new FixtureError(err.message, 'malformed');
+    }
+    throw err;
+  }
 
   const lhs = terms.reduce((total, term) => total + ipow(term, k), 0n);
   const target = ipow(rhs, k);
