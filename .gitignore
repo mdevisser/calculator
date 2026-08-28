@@ -3,3 +3,7 @@
 .env.*
 !.env.tpl
 !.env.example
+
+# Tooling scratch
+.superpowers/
+node_modules/
