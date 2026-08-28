@@ -20,6 +20,12 @@ test('I1: a search-requiring claim that was not exhaustive is INDETERMINATE', ()
   );
 });
 
+// The safe default is load-bearing, not decorative: flipping `exhaustive` to
+// default true must break something.
+test('I1: omitting exhaustive on a search-requiring claim is INDETERMINATE', () => {
+  assert.equal(decide({ checks: passing, requiresSearch: true }), VERDICT.INDETERMINATE);
+});
+
 test('I1: a search-requiring claim that was exhaustive may be CONFIRMED', () => {
   assert.equal(
     decide({ checks: passing, requiresSearch: true, exhaustive: true }),

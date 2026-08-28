@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { runFixture, runAll } from '../../src/harness/runner.js';
 import { VERDICT } from '../../src/harness/verdict.js';
+import { PROBLEMS } from '../../src/harness/registry.js';
 
 const FIXTURES = fileURLToPath(new URL('../../fixtures', import.meta.url));
 
@@ -65,4 +66,49 @@ test('runAll reads every fixture on disk and all of them meet expectations', asy
   assert.ok(results.length >= 4, 'expected at least the four euler fixtures');
   const surprises = results.filter((r) => !r.asExpected);
   assert.deepEqual(surprises, [], `unexpected verdicts: ${JSON.stringify(surprises, null, 2)}`);
+});
+
+// I1 must survive a module that never calls decide(). The runner is the last
+// place a verdict passes through, so the invariant is re-derived there too.
+test('I1: the runner downgrades a CONFIRMED claim whose search was not exhaustive', (t) => {
+  PROBLEMS.set('stub', {
+    problem: 'stub',
+    conjecture: 'a stub that bypasses decide()',
+    verify: () => ({
+      checks: [{ name: 'stub', pass: true, expected: '1', actual: '1' }],
+      requiresSearch: true,
+      exhaustive: undefined,
+      searched: 3,
+      verdict: VERDICT.CONFIRMED,
+    }),
+  });
+  t.after(() => PROBLEMS.delete('stub'));
+
+  const result = runFixture(base({ problem: 'stub' }), 'stub/x');
+  assert.equal(result.verdict, VERDICT.INDETERMINATE);
+  assert.equal(result.reason, 'non-exhaustive-search');
+});
+
+test('the runner leaves an exhaustive CONFIRMED claim alone', (t) => {
+  PROBLEMS.set('stub', {
+    problem: 'stub',
+    conjecture: 'a stub that searched its whole space',
+    verify: () => ({
+      checks: [{ name: 'stub', pass: true, expected: '1', actual: '1' }],
+      requiresSearch: true,
+      exhaustive: true,
+      searched: 3,
+      verdict: VERDICT.CONFIRMED,
+    }),
+  });
+  t.after(() => PROBLEMS.delete('stub'));
+
+  assert.equal(runFixture(base({ problem: 'stub' }), 'stub/x').verdict, VERDICT.CONFIRMED);
+});
+
+test('a genuine euler result requires no search and is untouched by the backstop', () => {
+  const result = runFixture(base(), 'euler/x');
+  assert.equal(result.requiresSearch, false);
+  assert.equal(result.verdict, VERDICT.CONFIRMED);
+  assert.equal(result.reason, undefined);
 });

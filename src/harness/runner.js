@@ -12,6 +12,20 @@ function finish(result) {
   return { ...result, asExpected: result.verdict === result.expect };
 }
 
+// I1, structurally. decide() enforces it for modules that call it, but a module
+// is free to return a verdict of its own, so the invariant is re-derived here —
+// the last point every verdict passes through — rather than trusted.
+function enforceExhaustiveness(result) {
+  if (
+    result.verdict === VERDICT.CONFIRMED &&
+    result.requiresSearch === true &&
+    result.exhaustive !== true
+  ) {
+    return { ...result, verdict: VERDICT.INDETERMINATE, reason: 'non-exhaustive-search' };
+  }
+  return result;
+}
+
 export function runFixture(raw, fixtureName) {
   const started = process.hrtime.bigint();
   const shell = {
@@ -44,7 +58,7 @@ export function runFixture(raw, fixtureName) {
       });
     }
 
-    const result = module.verify(fixture);
+    const result = enforceExhaustiveness(module.verify(fixture));
     return finish({
       ...shell,
       ...result,
