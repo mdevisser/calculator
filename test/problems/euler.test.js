@@ -66,6 +66,30 @@ test('the exponent check alone refutes k = 2, with every other check passing', a
   }
 });
 
+// I3, in the direction that is easy to get backwards: "-27" is a well-formed
+// claim that simply is not a counterexample, so it is the math saying no, not us.
+test('a negative term is a failed check and REFUTED, not ERROR', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const result = verify({ ...fixture, data: { k: '5', terms: ['-27', '84', '110', '133'], rhs: '144' } });
+
+  assert.equal(result.verdict, VERDICT.REFUTED);
+  const positive = result.checks.find((c) => c.name.includes('positive'));
+  assert.equal(positive.pass, false);
+});
+
+test('a zero term is a failed check and REFUTED, not ERROR', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const result = verify({ ...fixture, data: { k: '5', terms: ['0', '84', '110', '133'], rhs: '144' } });
+
+  assert.equal(result.verdict, VERDICT.REFUTED);
+  assert.equal(result.checks.find((c) => c.name.includes('positive')).pass, false);
+});
+
+test('a term list of genuine positive integers passes the positivity check', async () => {
+  const result = verify(await load('lander-parkin-1966'));
+  assert.equal(result.checks.find((c) => c.name.includes('positive')).pass, true);
+});
+
 test('malformed data throws FixtureError rather than returning a verdict', async () => {
   const fixture = await load('lander-parkin-1966');
   assert.throws(() => verify({ ...fixture, data: { k: '5', terms: 'not-an-array', rhs: '144' } }), FixtureError);
@@ -88,6 +112,24 @@ test('a non-numeric term is malformed', async () => {
   const fixture = await load('lander-parkin-1966');
   const bad = { ...fixture, data: { k: '5', terms: ['abc', '84', '110', '133'], rhs: '144' } };
   assert.throws(() => verify(bad), (e) => e instanceof FixtureError && e.code === 'malformed');
+});
+
+test('a JSON-number term is malformed, not a failed check', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const bad = { ...fixture, data: { k: '5', terms: [27, '84', '110', '133'], rhs: '144' } };
+  assert.throws(() => verify(bad), (e) => e instanceof FixtureError && e.code === 'malformed');
+});
+
+test('a term with leading zeros or a decimal point is malformed', async () => {
+  const fixture = await load('lander-parkin-1966');
+  for (const term of ['007', '1.5', '', ' 27', '1e5', '-']) {
+    const bad = { ...fixture, data: { k: '5', terms: [term, '84', '110', '133'], rhs: '144' } };
+    assert.throws(
+      () => verify(bad),
+      (e) => e instanceof FixtureError && e.code === 'malformed',
+      `should reject ${JSON.stringify(term)}`,
+    );
+  }
 });
 
 test('a missing data object is malformed', async () => {

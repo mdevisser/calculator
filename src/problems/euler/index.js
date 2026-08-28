@@ -2,6 +2,23 @@ import { toBigIntStrict, ipow } from '../../exact/integer.js';
 import { decide } from '../../harness/verdict.js';
 import { FixtureError } from '../../harness/schema.js';
 
+// Spec 5 lists "all terms positive integers" among the checks, so a term that is
+// syntactically a decimal integer but zero or negative is the math saying no
+// (REFUTED), not us saying no (ERROR). toBigIntStrict conflates the two, and its
+// other callers (k, rhs) want exactly that, so terms parse through this local
+// widening and positivity is left to a check.
+const SIGNED_DECIMAL = /^-?(0|[1-9][0-9]*)$/;
+
+function toTermBigInt(value, field) {
+  if (typeof value !== 'string' || !SIGNED_DECIMAL.test(value)) {
+    throw new FixtureError(
+      `${field}: expected a decimal integer string, got ${JSON.stringify(value)}`,
+      'malformed',
+    );
+  }
+  return BigInt(value);
+}
+
 export const problem = 'euler';
 
 export const conjecture =
@@ -21,10 +38,11 @@ export function verify(fixture) {
     throw new FixtureError('data.terms must be a non-empty array', 'malformed');
   }
 
-  let k, terms, rhs;
+  const terms = termsRaw.map((term, i) => toTermBigInt(term, `data.terms[${i}]`));
+
+  let k, rhs;
   try {
     k = toBigIntStrict(kRaw, 'data.k');
-    terms = termsRaw.map((term, i) => toBigIntStrict(term, `data.terms[${i}]`));
     rhs = toBigIntStrict(rhsRaw, 'data.rhs');
   } catch (err) {
     if (err instanceof TypeError || err instanceof RangeError) {
@@ -42,6 +60,15 @@ export function verify(fixture) {
       pass: k >= 3n,
       expected: 'k >= 3',
       actual: `k = ${k}`,
+    },
+    {
+      name: 'all terms are positive integers',
+      pass: terms.every((term) => term > 0n),
+      expected: 'every term >= 1',
+      actual: (() => {
+        const bad = terms.filter((term) => term <= 0n);
+        return bad.length === 0 ? 'all positive' : `nonpositive: ${bad.join(', ')}`;
+      })(),
     },
     {
       name: 'uses fewer than k terms',
