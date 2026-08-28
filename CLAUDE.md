@@ -114,6 +114,11 @@ The Jacobian counterexample refutes the conjecture in **dimensions ≥ 3 only**;
 planar case remains open. A page reading "Jacobian conjecture: REFUTED" without that
 qualifier is wrong.
 
+The DGG result is **Goemans' cost conjecture**, not the Dinitz–Garg–Goemans theorem.
+The theorem (1999) — a congestion-good unsplittable routing always exists with
+`y_a <= x_a + D` — is proven and untouched. Only the cost strengthening fell. Never
+label this "Dinitz–Garg–Goemans: REFUTED".
+
 ## Development
 
 ```bash

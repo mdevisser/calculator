@@ -120,9 +120,18 @@ No search, so `exhaustive` is `n/a` and I1 does not bind.
 
 ### v2 — `dgg/`
 
-The Dinitz–Garg–Goemans conjecture: every fractional flow can be rounded to an
-unsplittable flow costing no more, while each arc's load is exceeded by at most the
-largest single demand.
+**Goemans' cost conjecture** (also called the DGG cost conjecture). Naming matters
+here: Dinitz, Garg and Goemans (1999) *proved* the congestion result — given a
+feasible fractional flow `x`, an unsplittable routing always exists with
+`y_a <= x_a + D` on every arc, where `D` is the maximum single demand. **That theorem
+stands and is not what fell.** Goemans conjectured the strengthening: that such a
+routing can simultaneously be no more expensive than the fractional flow. Rybin's
+2026 counterexample refutes the strengthening only.
+
+The claim verified is therefore: for the given cost vector `c`, every congestion-good
+unsplittable routing costs strictly more than `c·x`. The congestion bound is per-arc
+and relative to `x` itself — the fractional flow doubles as the capacity vector —
+not a flat budget.
 
 The claim is universally quantified, so the module proves a negative:
 
