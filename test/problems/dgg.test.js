@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { verify, scoreRoutings, problem, conjecture } from '../../src/problems/dgg/index.js';
 import { parseNetwork } from '../../src/problems/dgg/graph.js';
 import { cmp, toString } from '../../src/exact/rational.js';
@@ -169,4 +171,23 @@ test('scoreRoutings sums, rather than overwrites, demand contributions on a shar
   // Overwriting (last write wins, t2's demand of 2) would give a trunk load
   // of 2 and a cost of 5 instead.
   assert.equal(toString(scored.cheapestGood), '6');
+});
+
+// A genuine hit found by scripts/search-juang.js sweeping an unverified
+// three-parameter family from a social-media follow-up to Rybin's
+// announcement. This is a lead confirmed locally by exhaustive enumeration,
+// not an established result -- see the fixture's source block.
+test('juang-family-7-2-1: a swept instance is CONFIRMED by exhaustive enumeration', async () => {
+  const fixturePath = fileURLToPath(
+    new URL('../../fixtures/dgg/juang-family-7-2-1.json', import.meta.url),
+  );
+  const fixture = JSON.parse(await readFile(fixturePath, 'utf8'));
+
+  const result = verify(fixture);
+
+  assert.equal(result.verdict, VERDICT.CONFIRMED);
+  assert.equal(result.exhaustive, true);
+  const costCheck = result.checks.find((c) => c.name.includes('costs more'));
+  assert.ok(costCheck);
+  assert.equal(costCheck.pass, true);
 });

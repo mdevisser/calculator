@@ -1,0 +1,32 @@
+{
+  "problem": "dgg",
+  "candidate": "juang-family-7-2-1",
+  "claim": "instance b=7, m=2, g=1 of a three-parameter family from a follow-up post to Rybin's announcement: fractional cost 125, every congestion-good unsplittable routing costs at least 126",
+  "expect": "CONFIRMED",
+  "source": {
+    "url": "https://x.com/basedjensen/status/2080020575968543230",
+    "author": "Derived from an unverified social-media follow-up describing a three-parameter (b, m, g) family attributed to Juang, following Rybin's announcement; the arcs, costs, and constraints here are this repository's transcription of that post, not a verified primary source. Confirmed locally by exhaustive enumeration over all 8 congestion-good routings for b=7, m=2, g=1.",
+    "date": "2026-08-28",
+    "peerReviewed": false
+  },
+  "data": {
+    "source": "s",
+    "nodes": ["s", "u", "v", "w", "t1", "t2", "t3"],
+    "arcs": [
+      { "from": "s", "to": "t1", "cost": "7", "flow": "7" },
+      { "from": "s", "to": "t2", "cost": "9", "flow": "3" },
+      { "from": "s", "to": "u", "cost": "0", "flow": "15" },
+      { "from": "u", "to": "v", "cost": "0", "flow": "8" },
+      { "from": "u", "to": "t3", "cost": "7", "flow": "7" },
+      { "from": "v", "to": "t1", "cost": "0", "flow": "2" },
+      { "from": "v", "to": "w", "cost": "0", "flow": "6" },
+      { "from": "w", "to": "t2", "cost": "0", "flow": "4" },
+      { "from": "w", "to": "t3", "cost": "0", "flow": "2" }
+    ],
+    "terminals": [
+      { "node": "t1", "demand": "9" },
+      { "node": "t2", "demand": "7" },
+      { "node": "t3", "demand": "9" }
+    ]
+  }
+}
