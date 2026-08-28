@@ -102,20 +102,71 @@ test('scoreRoutings finds the cheapest congestion-good routing and the fractiona
   assert.equal(cmp(dear.cheapestGood, dear.fractionalCost), 1);
 });
 
+// Shared fixture for the breach tests below: two terminals can each reach
+// their own node either through a shared trunk arc (s->m) with zero flow, or
+// through their own direct arc that already carries their fractional share.
+// Routing both terminals over the trunk loads it with the sum of both
+// demands, which exceeds the trunk's congestion bound (flow 0 + maxDemand 1);
+// routing them over their direct arcs never touches the trunk at all.
+const breachNetwork = parseNetwork({
+  source: 's',
+  nodes: ['s', 'm', 't1', 't2'],
+  arcs: [
+    { from: 's', to: 'm', cost: '1', flow: '0' }, // 0: shared trunk
+    { from: 'm', to: 't1', cost: '1', flow: '1' }, // 1
+    { from: 'm', to: 't2', cost: '1', flow: '1' }, // 2
+    { from: 's', to: 't1', cost: '1', flow: '1' }, // 3: t1's direct arc
+    { from: 's', to: 't2', cost: '1', flow: '1' }, // 4: t2's direct arc
+  ],
+  terminals: [{ node: 't1', demand: '1' }, { node: 't2', demand: '1' }],
+});
+const breachPaths = [
+  [[0, 1], [3]], // t1: via the trunk, or direct
+  [[0, 2], [4]], // t2: via the trunk, or direct
+];
+
 test('scoreRoutings excludes routings that breach the congestion bound', () => {
-  // Demand 1, and a second arc whose fractional flow is 0. The bound is
-  // y_a <= x_a + D with D = 1, so a load of 2 on that arc would breach it.
-  const network = parseNetwork({
-    source: 's',
-    nodes: ['s', 't1', 't2'],
-    arcs: [
-      { from: 's', to: 't1', cost: '1', flow: '1' },
-      { from: 's', to: 't2', cost: '1', flow: '1' },
-    ],
-    terminals: [{ node: 't1', demand: '1' }, { node: 't2', demand: '1' }],
-  });
-  const paths = [[[0]], [[1]]];
-  const scored = scoreRoutings(network, paths, [[0, 0]]);
+  // Routing [0, 0] sends both terminals over the shared trunk: load 2 against
+  // a bound of flow(0) + maxDemand(1) = 1 on arc 0, a genuine breach.
+  // Routing [1, 1] sends both over their own direct arcs and never loads the
+  // trunk, so it is genuinely congestion-good.
+  const scored = scoreRoutings(breachNetwork, breachPaths, [[0, 0], [1, 1]]);
   assert.equal(scored.goodCount, 1);
   assert.equal(toString(scored.cheapestGood), '2');
+});
+
+test('scoreRoutings reports no good routing as goodCount 0 and cheapestGood null', () => {
+  // The same breaching routing as above, offered alone: nothing survives.
+  const scored = scoreRoutings(breachNetwork, breachPaths, [[0, 0]]);
+  assert.equal(scored.goodCount, 0);
+  assert.equal(scored.cheapestGood, null);
+});
+
+test('scoreRoutings sums, rather than overwrites, demand contributions on a shared arc', () => {
+  // Two terminals with DIFFERENT demands both routed through a shared trunk
+  // arc. The trunk's flow is set to exactly the sum of the two demands, so a
+  // correct (summing) implementation reproduces the fractional cost exactly;
+  // an implementation that overwrites instead of accumulates undercounts the
+  // trunk's load by whichever demand was applied first, understating the cost.
+  const network = parseNetwork({
+    source: 's',
+    nodes: ['s', 'm', 't1', 't2'],
+    arcs: [
+      { from: 's', to: 'm', cost: '1', flow: '3' }, // 0: trunk, shared by both
+      { from: 'm', to: 't1', cost: '1', flow: '1' }, // 1
+      { from: 'm', to: 't2', cost: '1', flow: '2' }, // 2
+    ],
+    terminals: [{ node: 't1', demand: '1' }, { node: 't2', demand: '2' }],
+  });
+  const paths = [
+    [[0, 1]], // t1: only route is via the trunk
+    [[0, 2]], // t2: only route is via the trunk
+  ];
+
+  const scored = scoreRoutings(network, paths, [[0, 0]]);
+  assert.equal(scored.goodCount, 1);
+  // Trunk load must be 1 + 2 = 3, matching its flow, for a cost of 6.
+  // Overwriting (last write wins, t2's demand of 2) would give a trunk load
+  // of 2 and a cost of 5 instead.
+  assert.equal(toString(scored.cheapestGood), '6');
 });
