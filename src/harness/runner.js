@@ -26,7 +26,10 @@ function enforceExhaustiveness(result) {
   return result;
 }
 
-export function runFixture(raw, fixtureName) {
+// `loadError` carries a failure that happened before the fixture could even be
+// parsed. It is routed through the same boundary so an unreadable file yields an
+// ERROR verdict with a reason code (spec 7) instead of aborting the run.
+export function runFixture(raw, fixtureName, loadError = null) {
   const started = process.hrtime.bigint();
   const shell = {
     fixture: fixtureName,
@@ -42,6 +45,10 @@ export function runFixture(raw, fixtureName) {
   };
 
   try {
+    if (loadError) {
+      throw loadError;
+    }
+
     const fixture = validateFixture(raw);
 
     const module = PROBLEMS.get(fixture.problem);
@@ -86,14 +93,22 @@ export async function loadFixtureFiles(dir) {
     .sort();
 
   return Promise.all(
-    files.map(async (file) => ({
-      name: path.relative(dir, file).replace(/\.json$/, ''),
-      raw: JSON.parse(await readFile(file, 'utf8')),
-    })),
+    files.map(async (file) => {
+      const name = path.relative(dir, file).replace(/\.json$/, '');
+      try {
+        return { name, raw: JSON.parse(await readFile(file, 'utf8')), loadError: null };
+      } catch (error) {
+        return {
+          name,
+          raw: null,
+          loadError: new FixtureError(`cannot read fixture: ${error.message}`, 'unreadable'),
+        };
+      }
+    }),
   );
 }
 
 export async function runAll(dir) {
   const loaded = await loadFixtureFiles(dir);
-  return loaded.map(({ name, raw }) => runFixture(raw, name));
+  return loaded.map(({ name, raw, loadError }) => runFixture(raw, name, loadError));
 }

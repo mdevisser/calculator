@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
+import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { runFixture, runAll } from '../../src/harness/runner.js';
 import { VERDICT } from '../../src/harness/verdict.js';
 import { PROBLEMS } from '../../src/harness/registry.js';
@@ -111,4 +114,24 @@ test('a genuine euler result requires no search and is untouched by the backstop
   assert.equal(result.requiresSearch, false);
   assert.equal(result.verdict, VERDICT.CONFIRMED);
   assert.equal(result.reason, undefined);
+});
+
+// Spec 7: an unreadable fixture is an ERROR with a reason code, not an abort.
+// JSON.parse used to sit outside the per-fixture boundary, so one bad file
+// killed the whole run and produced no verdicts at all.
+test('an unparseable fixture file is ERROR and the rest of the run still reports', async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), 'fixtures-'));
+  await mkdir(path.join(dir, 'euler'));
+  await writeFile(path.join(dir, 'euler', 'good.json'), JSON.stringify(base()), 'utf8');
+  await writeFile(path.join(dir, 'euler', 'broken.json'), '{ "problem": "euler",', 'utf8');
+
+  const results = await runAll(dir);
+
+  assert.equal(results.length, 2);
+  const broken = results.find((r) => r.fixture === 'euler/broken');
+  assert.equal(broken.verdict, VERDICT.ERROR);
+  assert.equal(broken.reason, 'unreadable');
+
+  const good = results.find((r) => r.fixture === 'euler/good');
+  assert.equal(good.verdict, VERDICT.CONFIRMED, 'the readable fixture still reports');
 });
