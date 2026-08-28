@@ -93,11 +93,12 @@ qualifier is wrong.
 ## Development
 
 ```bash
-node bin/verify.js <problem>/<fixture>   # once M1 lands
+node bin/verify.js <problem>/<fixture>
 node bin/verify.js --all
 node --test                              # tests
 
-python3 -m http.server 8000              # then visit web/
+open web/index.html                      # no server needed
+python3 -m http.server 8000              # or serve, then visit /web/
 ```
 
 ## Git Conventions

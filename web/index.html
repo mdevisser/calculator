@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Counterexample Verifier</title>
+<style>
+  :root {
+    --paper:#eceff5; --surface:#fff; --rule:#d0d6e2; --ink:#131720; --ink-2:#4b5364;
+    --ink-3:#7b8496; --accent:#23407a; --ok:#1b6152; --ok-bg:#d3e7e1;
+    --bad:#8d3123; --bad-bg:#f2ddd8; --warn:#7a590f; --warn-bg:#eee4cb;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#0e1117; --surface:#161a23; --rule:#2a3040; --ink:#e5e9f1; --ink-2:#a3abbb;
+      --ink-3:#737c8d; --accent:#92b2e9; --ok:#6dc1a6; --ok-bg:#12302a;
+      --bad:#e18d7e; --bad-bg:#331915; --warn:#d6b063; --warn-bg:#2c2511;
+    }
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font:16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width:60rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  h1 { font-size:2rem; margin:0 0 .5rem; letter-spacing:-.02em; }
+  .sub { color:var(--ink-2); margin:0 0 2.5rem; }
+  .sub a { color:var(--accent); }
+  .panel {
+    background:var(--surface); border:1px solid var(--rule); border-radius:3px;
+    padding:1.5rem; margin-bottom:1.5rem;
+  }
+  .panel h2 { font-size:1.25rem; margin:0 0 .5rem; }
+  .conjecture {
+    color:var(--ink-2); border-left:2px solid var(--accent); padding-left:1rem;
+    margin:0 0 1.25rem; max-width:62ch;
+  }
+  table { width:100%; border-collapse:collapse; font-size:.875rem; }
+  th {
+    text-align:left; font:500 .625rem/1.6 var(--mono); letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-3); padding:0 .75rem .5rem 0;
+    border-bottom:1px solid var(--rule);
+  }
+  td { padding:.625rem .75rem .625rem 0; border-bottom:1px solid var(--rule); vertical-align:top; }
+  .cand { font-family:var(--mono); font-size:.8125rem; }
+  .chip {
+    display:inline-block; font:600 .6875rem/1.6 var(--mono); letter-spacing:.08em;
+    padding:.125rem .5rem; border-radius:2px; white-space:nowrap;
+  }
+  .CONFIRMED { background:var(--ok-bg); color:var(--ok); }
+  .REFUTED { background:var(--bad-bg); color:var(--bad); }
+  .INDETERMINATE, .ERROR { background:var(--warn-bg); color:var(--warn); }
+  .prov { font-size:.75rem; color:var(--ink-3); }
+  .prov a { color:var(--accent); }
+  .unrefereed { color:var(--warn); font-weight:600; }
+  .surprise { color:var(--bad); font-weight:600; }
+  details { margin-top:.5rem; }
+  summary { cursor:pointer; font-size:.75rem; color:var(--ink-3); }
+  summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  pre {
+    font-family:var(--mono); font-size:.75rem; background:var(--paper);
+    padding:.75rem; border-radius:2px; overflow-x:auto; margin:.5rem 0 0;
+  }
+  .empty { color:var(--ink-3); }
+  footer { margin-top:3rem; font-size:.8125rem; color:var(--ink-3); }
+  footer a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Counterexample Verifier</h1>
+  <p class="sub" id="summary"></p>
+  <div id="panels"></div>
+  <footer>
+    Exact BigInt arithmetic, no floating point. Verdicts are recomputed by
+    <code>node bin/verify.js --all</code>.
+    &middot; <a href="./calculator.html">calculator</a>
+  </footer>
+</div>
+<script src="./results.js"></script>
+<script>
+  const report = globalThis.RESULTS;
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  };
+
+  const summary = document.getElementById('summary');
+  if (!report) {
+    summary.textContent = 'No results yet. Run: node bin/verify.js --all';
+  } else {
+    const counts = Object.entries(report.tally)
+      .filter(([, n]) => n > 0)
+      .map(([v, n]) => n + ' ' + v.toLowerCase())
+      .join(', ');
+    summary.textContent = counts + ' · generated ' + report.generatedAt;
+    if (report.unexpected > 0) {
+      summary.appendChild(el('span', 'surprise', ' · ' + report.unexpected + ' unexpected'));
+    }
+
+    const byProblem = new Map();
+    for (const r of report.results) {
+      if (!byProblem.has(r.problem)) byProblem.set(r.problem, []);
+      byProblem.get(r.problem).push(r);
+    }
+
+    const panels = document.getElementById('panels');
+    for (const [problem, rows] of byProblem) {
+      const panel = el('div', 'panel');
+      panel.appendChild(el('h2', null, problem));
+      const conj = rows.find((r) => r.conjecture);
+      if (conj) panel.appendChild(el('p', 'conjecture', conj.conjecture));
+
+      const table = el('table');
+      const head = el('tr');
+      for (const label of ['Candidate', 'Verdict', 'Exhaustive', 'Provenance']) {
+        head.appendChild(el('th', null, label));
+      }
+      table.appendChild(head);
+
+      for (const r of rows) {
+        const tr = el('tr');
+
+        const cand = el('td', 'cand');
+        cand.appendChild(el('div', null, r.candidate));
+        if (r.claim) cand.appendChild(el('div', 'prov', r.claim));
+
+        const details = el('details');
+        details.appendChild(el('summary', null, 'trace'));
+        const lines = (r.checks || []).map(
+          (c) => (c.pass ? '  ok   ' : '  FAIL ') + c.name +
+            (c.pass ? '' : '\n         expected ' + c.expected + '\n         actual   ' + c.actual),
+        );
+        if (r.reason) lines.push('  reason: ' + r.reason);
+        if (r.searched !== null && r.searched !== undefined) lines.push('  searched: ' + r.searched);
+        lines.push('  elapsed: ' + r.elapsedMs.toFixed(2) + ' ms');
+        details.appendChild(el('pre', null, lines.join('\n')));
+        cand.appendChild(details);
+        tr.appendChild(cand);
+
+        const verdict = el('td');
+        verdict.appendChild(el('span', 'chip ' + r.verdict, r.verdict));
+        if (!r.asExpected) {
+          verdict.appendChild(el('div', 'surprise', 'expected ' + r.expect));
+        }
+        tr.appendChild(verdict);
+
+        // I2: exhaustiveness state is never omitted.
+        const exh = el('td', 'prov');
+        exh.textContent = r.requiresSearch === false
+          ? 'not required'
+          : r.exhaustive === true
+            ? 'yes (' + r.searched + ' searched)'
+            : 'NO — verdict capped at indeterminate';
+        tr.appendChild(exh);
+
+        // I2: provenance is never omitted.
+        const prov = el('td', 'prov');
+        if (r.source) {
+          if (!r.source.peerReviewed) {
+            prov.appendChild(el('div', 'unrefereed', 'not peer reviewed'));
+          }
+          prov.appendChild(el('div', null, r.source.author));
+          const a = el('a', null, r.source.date);
+          a.href = r.source.url;
+          a.rel = 'noreferrer';
+          prov.appendChild(a);
+        } else {
+          prov.appendChild(el('span', 'empty', 'none'));
+        }
+        tr.appendChild(prov);
+
+        table.appendChild(tr);
+      }
+      panel.appendChild(table);
+      panels.appendChild(panel);
+    }
+  }
+</script>
+</body>
+</html>

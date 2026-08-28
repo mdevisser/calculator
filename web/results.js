@@ -1,5 +1,5 @@
 globalThis.RESULTS = {
-  "generatedAt": "2026-08-28T20:56:59.073Z",
+  "generatedAt": "2026-08-28T20:59:30.293Z",
   "tally": {
     "CONFIRMED": 2,
     "REFUTED": 2,
@@ -45,7 +45,7 @@ globalThis.RESULTS = {
       "searched": null,
       "verdict": "CONFIRMED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
-      "elapsedMs": 0.169166,
+      "elapsedMs": 0.185041,
       "asExpected": true
     },
     {
@@ -85,7 +85,7 @@ globalThis.RESULTS = {
       "searched": null,
       "verdict": "CONFIRMED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
-      "elapsedMs": 0.018,
+      "elapsedMs": 0.016458,
       "asExpected": true
     },
     {
@@ -125,7 +125,7 @@ globalThis.RESULTS = {
       "searched": null,
       "verdict": "REFUTED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
-      "elapsedMs": 0.00975,
+      "elapsedMs": 0.009083,
       "asExpected": true
     },
     {
@@ -165,7 +165,7 @@ globalThis.RESULTS = {
       "searched": null,
       "verdict": "REFUTED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
-      "elapsedMs": 0.007708,
+      "elapsedMs": 0.00775,
       "asExpected": true
     }
   ]
