@@ -50,6 +50,22 @@ test('an exponent below 3 is refuted, since the conjecture starts at k = 3', asy
   assert.equal(result.verdict, VERDICT.REFUTED);
 });
 
+// The test above fails two checks at once, so it cannot tell which one produced
+// the verdict. This one leaves the exponent check as the only failure: 5^2 = 5^2
+// is true arithmetic using fewer than k terms, and k = 2 is simply below the
+// range the conjecture speaks about.
+test('the exponent check alone refutes k = 2, with every other check passing', async () => {
+  const fixture = await load('lander-parkin-1966');
+  const result = verify({ ...fixture, data: { k: '2', terms: ['5'], rhs: '5' } });
+
+  assert.equal(result.verdict, VERDICT.REFUTED);
+  const exponent = result.checks.find((c) => c.name.includes('exponent'));
+  assert.equal(exponent.pass, false, 'k = 2 is below the conjecture range');
+  for (const other of result.checks.filter((c) => c !== exponent)) {
+    assert.equal(other.pass, true, `${other.name} should pass in isolation`);
+  }
+});
+
 test('malformed data throws FixtureError rather than returning a verdict', async () => {
   const fixture = await load('lander-parkin-1966');
   assert.throws(() => verify({ ...fixture, data: { k: '5', terms: 'not-an-array', rhs: '144' } }), FixtureError);
