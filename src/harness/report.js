@@ -11,7 +11,11 @@ const GLYPH = {
 export function buildReport(results) {
   const tally = Object.fromEntries(Object.values(VERDICT).map((v) => [v, 0]));
   for (const result of results) {
-    tally[result.verdict] += 1;
+    // A verdict name the contract does not define is our bug, not a
+    // mathematical finding, so it lands in ERROR (I3) rather than adding a
+    // stray key and an NaN to the summary.
+    const verdict = Object.hasOwn(tally, result.verdict) ? result.verdict : VERDICT.ERROR;
+    tally[verdict] += 1;
   }
   return {
     generatedAt: new Date().toISOString(),

@@ -73,3 +73,18 @@ test('writeReport persists the deterministic form, byte for byte repeatable', as
   assert.equal(await readFile(jsonPath, 'utf8'), first);
   assert.doesNotMatch(first, /generatedAt|elapsedMs/);
 });
+
+// An unrecognized verdict string used to yield NaN and a stray tally key, which
+// would render as a broken summary rather than as the bug it is.
+test('an unrecognized verdict counts as ERROR and leaves the tally intact', () => {
+  const report = buildReport([
+    ...results,
+    { fixture: 'euler/d', problem: 'euler', verdict: 'PROBABLY', expect: 'CONFIRMED', asExpected: false, checks: [], elapsedMs: 1 },
+  ]);
+
+  assert.deepEqual(Object.keys(report.tally), ['CONFIRMED', 'REFUTED', 'INDETERMINATE', 'ERROR']);
+  for (const count of Object.values(report.tally)) {
+    assert.ok(Number.isInteger(count), `tally holds ${count}`);
+  }
+  assert.equal(report.tally.ERROR, 2, 'a verdict we cannot name is our failure, per I3');
+});
