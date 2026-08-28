@@ -21,13 +21,28 @@ export function buildReport(results) {
   };
 }
 
+// results.json and web/results.js are committed so the page needs no build. A
+// timestamp or a timing in them means every run dirties the tree with a diff
+// that says nothing — and diff noise is exactly what stops people re-running
+// verify, which is what makes a stale published page likely. Timings stay in
+// the in-memory report, where the terminal can show them.
+export function toPersisted(report) {
+  const { generatedAt, ...stable } = report;
+  return {
+    ...stable,
+    results: report.results.map(({ elapsedMs, ...result }) => result),
+  };
+}
+
 export function formatTerminal(report) {
   const lines = [];
   for (const result of report.results) {
     const flag = result.asExpected ? ' ' : '<';
     const detail = result.reason ? `  (${result.reason})` : '';
+    const timing =
+      typeof result.elapsedMs === 'number' ? `  ${result.elapsedMs.toFixed(2)} ms` : '';
     lines.push(
-      `  ${GLYPH[result.verdict]} ${flag} ${result.fixture.padEnd(48)} ${result.verdict}${detail}`,
+      `  ${GLYPH[result.verdict]} ${flag} ${result.fixture.padEnd(48)} ${result.verdict}${detail}${timing}`,
     );
     for (const check of result.checks) {
       lines.push(
@@ -46,7 +61,7 @@ export function formatTerminal(report) {
 }
 
 export async function writeReport(report, { jsonPath, jsPath }) {
-  const json = JSON.stringify(report, null, 2);
+  const json = JSON.stringify(toPersisted(report), null, 2);
   await writeFile(jsonPath, `${json}\n`, 'utf8');
   // Browsers block fetch() from file:// origins. A script assignment keeps the
   // page openable by double-clicking, with no server and no build step.

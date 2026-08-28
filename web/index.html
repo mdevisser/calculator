@@ -96,7 +96,7 @@
       .filter(([, n]) => n > 0)
       .map(([v, n]) => n + ' ' + v.toLowerCase())
       .join(', ');
-    summary.textContent = counts + ' · generated ' + report.generatedAt;
+    summary.textContent = counts;
     if (report.unexpected > 0) {
       summary.appendChild(el('span', 'surprise', ' · ' + report.unexpected + ' unexpected'));
     }
@@ -136,7 +136,7 @@
         );
         if (r.reason) lines.push('  reason: ' + r.reason);
         if (r.searched !== null && r.searched !== undefined) lines.push('  searched: ' + r.searched);
-        lines.push('  elapsed: ' + r.elapsedMs.toFixed(2) + ' ms');
+        if (lines.length === 0) lines.push('  no checks recorded');
         details.appendChild(el('pre', null, lines.join('\n')));
         cand.appendChild(details);
         tr.appendChild(cand);

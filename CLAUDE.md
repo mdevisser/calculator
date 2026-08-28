@@ -34,6 +34,11 @@ What is on disk:
 it under M1, but Euler needs only integers; the plan deliberately defers rationals to
 `dgg/`, the first module that actually needs them. Do not build it speculatively.
 
+The committed `results.json` is deterministic — no timestamps, no timings, so a run
+that changes nothing leaves the tree clean. A test re-runs the fixtures and asserts the
+committed artifact still matches, so a stale page fails the suite: edit a fixture,
+re-run `node bin/verify.js --all`, and commit the artifacts with it.
+
 ## What this is
 
 The 2026 AI mathematics results — the Erdős unit-distance disproof, OpenAI Astra's ten
