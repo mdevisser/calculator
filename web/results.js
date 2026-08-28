@@ -1,0 +1,52 @@
+globalThis.RESULTS = {
+  "generatedAt": "2026-08-28T20:53:48.365Z",
+  "tally": {
+    "CONFIRMED": 1,
+    "REFUTED": 0,
+    "INDETERMINATE": 0,
+    "ERROR": 0
+  },
+  "unexpected": 0,
+  "results": [
+    {
+      "fixture": "euler/elkies-1988",
+      "problem": "euler",
+      "candidate": "elkies-1988",
+      "claim": "2682440^4 + 15365639^4 + 18796760^4 = 20615673^4, three fourth powers summing to a fourth power",
+      "expect": "CONFIRMED",
+      "source": {
+        "url": "https://www.ams.org/journals/mcom/1988-51-184/S0025-5718-1988-0930224-9/",
+        "author": "Noam D. Elkies",
+        "date": "1988-10-01",
+        "peerReviewed": true
+      },
+      "checks": [
+        {
+          "name": "exponent is at least 3",
+          "pass": true,
+          "expected": "k >= 3",
+          "actual": "k = 4"
+        },
+        {
+          "name": "uses fewer than k terms",
+          "pass": true,
+          "expected": "at most 3 terms",
+          "actual": "3 terms"
+        },
+        {
+          "name": "sum of k-th powers equals the k-th power",
+          "pass": true,
+          "expected": "180630077292169281088848499041",
+          "actual": "180630077292169281088848499041"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "verdict": "CONFIRMED",
+      "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
+      "elapsedMs": 0.169292,
+      "asExpected": true
+    }
+  ]
+};
