@@ -85,6 +85,7 @@
         .equals {
             background: #e74c3c;
             color: white;
+            grid-row: span 2;
         }
 
         .equals:hover {
@@ -127,26 +128,26 @@
         <div class="buttons">
             <button class="clear" onclick="clearDisplay()">C</button>
             <button class="clear" onclick="deleteLast()">←</button>
-            <button class="operator" onclick="appendToDisplay('/')" data-operator="/">÷</button>
-            <button class="operator" onclick="appendToDisplay('*')" data-operator="*">×</button>
+            <button class="operator" data-operator="/">÷</button>
+            <button class="operator" data-operator="*">×</button>
             
             <button onclick="appendToDisplay('7')">7</button>
             <button onclick="appendToDisplay('8')">8</button>
             <button onclick="appendToDisplay('9')">9</button>
-            <button class="operator" onclick="appendToDisplay('-')" data-operator="-">−</button>
+            <button class="operator" data-operator="-">−</button>
             
             <button onclick="appendToDisplay('4')">4</button>
             <button onclick="appendToDisplay('5')">5</button>
             <button onclick="appendToDisplay('6')">6</button>
-            <button class="operator" onclick="appendToDisplay('+')" data-operator="+">+</button>
+            <button class="operator" data-operator="+">+</button>
             
             <button onclick="appendToDisplay('1')">1</button>
             <button onclick="appendToDisplay('2')">2</button>
             <button onclick="appendToDisplay('3')">3</button>
-            <button class="equals" onclick="calculate()" rowspan="2">=</button>
+            <button class="equals" onclick="calculate()">=</button>
             
             <button class="zero" onclick="appendToDisplay('0')">0</button>
-            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="appendDecimal()">.</button>
         </div>
     </div>
 
@@ -156,6 +157,8 @@
         let operator = null;
         let previousInput = null;
         let waitingForOperand = false;
+        let lastOperator = null;
+        let lastOperand = null;
 
         function updateDisplay() {
             display.textContent = currentInput;
@@ -180,6 +183,8 @@
             previousInput = null;
             operator = null;
             waitingForOperand = false;
+            lastOperator = null;
+            lastOperand = null;
             updateDisplay();
         }
 
@@ -192,76 +197,105 @@
             updateDisplay();
         }
 
-        function calculate() {
-            if (operator && previousInput !== null && !waitingForOperand) {
-                const prev = parseFloat(previousInput);
-                const current = parseFloat(currentInput);
-                let result;
+        function appendDecimal() {
+            if (waitingForOperand) {
+                currentInput = '0.';
+                waitingForOperand = false;
+            } else if (currentInput.indexOf('.') === -1) {
+                currentInput += '.';
+            }
+            updateDisplay();
+        }
 
-                switch (operator) {
-                    case '+':
-                        result = prev + current;
-                        break;
-                    case '-':
-                        result = prev - current;
-                        break;
-                    case '*':
-                        result = prev * current;
-                        break;
-                    case '/':
-                        if (current === 0) {
-                            alert('Cannot divide by zero!');
-                            return;
-                        }
-                        result = prev / current;
-                        break;
-                    default:
-                        return;
-                }
+        // Trims binary floating-point noise: 0.1 + 0.2 -> 0.3, not 0.30000000000000004
+        function formatResult(value) {
+            if (!isFinite(value)) {
+                return 'Error';
+            }
+            return parseFloat(value.toPrecision(12)).toString();
+        }
 
-                currentInput = result.toString();
-                operator = null;
-                previousInput = null;
-                waitingForOperand = true;
-                updateDisplay();
+        function applyOperator(op, prev, current) {
+            switch (op) {
+                case '+':
+                    return prev + current;
+                case '-':
+                    return prev - current;
+                case '*':
+                    return prev * current;
+                case '/':
+                    if (current === 0) {
+                        return null;
+                    }
+                    return prev / current;
+                default:
+                    return null;
             }
         }
 
-        // Enhanced operator handling
+        function calculate() {
+            let prev, current, op;
+
+            if (operator && previousInput !== null && !waitingForOperand) {
+                prev = parseFloat(previousInput);
+                current = parseFloat(currentInput);
+                op = operator;
+            } else if (lastOperator !== null) {
+                // Repeated "=" replays the last operation on the running result
+                prev = parseFloat(currentInput);
+                current = lastOperand;
+                op = lastOperator;
+            } else {
+                return;
+            }
+
+            const result = applyOperator(op, prev, current);
+
+            if (result === null) {
+                alert('Cannot divide by zero!');
+                return;
+            }
+
+            lastOperator = op;
+            lastOperand = current;
+            currentInput = formatResult(result);
+            operator = null;
+            previousInput = null;
+            waitingForOperand = true;
+            updateDisplay();
+        }
+
+        function handleOperator(nextOperator) {
+            if (operator && !waitingForOperand) {
+                calculate();
+            }
+
+            previousInput = currentInput;
+            operator = nextOperator;
+            waitingForOperand = true;
+            lastOperator = null;
+            lastOperand = null;
+        }
+
         document.querySelectorAll('.operator').forEach(button => {
             button.addEventListener('click', function() {
-                const selectedOperator = this.getAttribute('data-operator');
-                
-                if (operator && !waitingForOperand) {
-                    calculate();
-                }
-                
-                previousInput = currentInput;
-                operator = selectedOperator;
-                waitingForOperand = true;
+                handleOperator(this.getAttribute('data-operator'));
             });
         });
 
         // Keyboard support
         document.addEventListener('keydown', function(event) {
             const key = event.key;
-            
+
             if (key >= '0' && key <= '9') {
                 event.preventDefault();
                 appendToDisplay(key);
             } else if (key === '.') {
                 event.preventDefault();
-                if (currentInput.indexOf('.') === -1) {
-                    appendToDisplay('.');
-                }
+                appendDecimal();
             } else if (key === '+' || key === '-' || key === '*' || key === '/') {
                 event.preventDefault();
-                if (operator && !waitingForOperand) {
-                    calculate();
-                }
-                previousInput = currentInput;
-                operator = key;
-                waitingForOperand = true;
+                handleOperator(key);
             } else if (key === 'Enter' || key === '=') {
                 event.preventDefault();
                 calculate();
