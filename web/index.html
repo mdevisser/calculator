@@ -148,13 +148,17 @@
         }
         tr.appendChild(verdict);
 
-        // I2: exhaustiveness state is never omitted.
+        // I2: exhaustiveness state is never omitted. An ERROR row has no
+        // exhaustiveness state to report — nothing was capped, nothing ran —
+        // so it says so rather than borrowing the capped-verdict label.
         const exh = el('td', 'prov');
-        exh.textContent = r.requiresSearch === false
-          ? 'not required'
-          : r.exhaustive === true
-            ? 'yes (' + r.searched + ' searched)'
-            : 'NO — verdict capped at indeterminate';
+        exh.textContent = r.verdict === 'ERROR'
+          ? 'n/a — no verification ran'
+          : r.requiresSearch === false
+            ? 'not required'
+            : r.exhaustive === true
+              ? 'yes (' + r.searched + ' searched)'
+              : 'NO — verdict capped at indeterminate';
         tr.appendChild(exh);
 
         // I2: provenance is never omitted.

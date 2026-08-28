@@ -48,3 +48,20 @@ test('the page renders no field the artifact does not persist', async () => {
     assert.doesNotMatch(html, new RegExp(volatile), `${volatile} is not persisted`);
   }
 });
+
+// I2 keeps the exhaustiveness cell always populated, but an ERROR row was
+// labelled "NO — verdict capped at indeterminate", which describes a different
+// state entirely: nothing was capped, nothing ran.
+test('the exhaustive cell has its own label for ERROR rows and is never blank', async () => {
+  const html = await readFile(new URL('../../web/index.html', import.meta.url), 'utf8');
+  const start = html.indexOf('const exh =');
+  const cell = html.slice(start, html.indexOf('tr.appendChild(exh)', start));
+
+  assert.ok(start > 0, 'the exhaustive cell should still exist');
+  assert.match(cell, /ERROR/, 'error rows need a label of their own');
+  assert.ok(
+    cell.indexOf('ERROR') < cell.indexOf('capped at indeterminate'),
+    'the ERROR branch must be reached before the capped-verdict label',
+  );
+  assert.doesNotMatch(cell, /''/, 'I2: the cell is never blank');
+});
