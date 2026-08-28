@@ -76,6 +76,18 @@ test('a sourced fixture must carry data', () => {
   assert.throws(() => validateFixture(fixture), (e) => e.code === 'missing-field');
 });
 
+// "unsourced" means the fixture's *data* has not been sourced, never that I2 is
+// waived. That currently holds only because the source check runs first, so pin it.
+test('I2: status unsourced does not waive the source requirement', () => {
+  const fixture = valid({ status: 'unsourced', expect: 'INDETERMINATE' });
+  delete fixture.source;
+  delete fixture.data;
+  assert.throws(
+    () => validateFixture(fixture),
+    (e) => e instanceof FixtureError && e.code === 'missing-source',
+  );
+});
+
 test('an unknown status is malformed', () => {
   assert.throws(() => validateFixture(valid({ status: 'draft' })), (e) => e.code === 'malformed');
 });
