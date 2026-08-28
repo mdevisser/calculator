@@ -747,17 +747,18 @@ git commit -m "feat: add dgg path and routing enumeration with exhaustiveness re
 - Test: `test/problems/dgg.test.js`
 
 **Interfaces:**
-- Consumes: Tasks 1–3; `decide` and `VERDICT` from `src/harness/verdict.js`; `FixtureError` from `src/harness/schema.js`.
-- Produces: module exports `problem: 'dgg'`, `conjecture: string`, `verify(fixture) -> {checks, requiresSearch: true, exhaustive, searched, verdict}`.
+- Consumes: Tasks 1-3; `decide` and `VERDICT` from `src/harness/verdict.js`; `FixtureError` from `src/harness/schema.js`.
+- Produces: module exports `problem: 'dgg'`, `conjecture: string`, `verify(fixture) -> {checks, requiresSearch: true, exhaustive, searched, verdict}`, and `scoreRoutings(network, pathsPerTerminal, routings) -> {goodCount, cheapestGood, fractionalCost}` exported for unit testing.
 
-Verification procedure: validate the flow; compute `D = maxDemand`; find simple `s → t_i` paths per terminal; enumerate routings within budget; for each routing accumulate `y_a` and reject unless `y_a ≤ x_a + D` on every arc; take the minimum cost among congestion-good routings; the counterexample stands iff that minimum is strictly greater than `c·x`.
+**Control flow matters here, and three exits are deliberate:**
 
-The four checks, in order:
+1. **Invalid instance -> `REFUTED` immediately, before any search.** If the declared fractional flow does not conserve or does not meet the demands, nothing downstream means anything.
+2. **Incomplete enumeration -> `INDETERMINATE`, and no further checks are appended.** This is subtle and load-bearing: if the exhaustiveness failure were expressed as a *failed check*, `decide()` would return `REFUTED` — turning "we did not look at everything" into "the claim is false". Those are different statements. The module returns early with only the passing flow checks and `exhaustive: false`, which is exactly the input `decide()` maps to `INDETERMINATE`.
+3. **No congestion-good routing on a fully enumerated space -> `FixtureError`, i.e. `ERROR`.** The DGG theorem guarantees one exists for any feasible fractional flow. Finding none means our enumerator or the instance is wrong. Per I3 that is our failure, never a mathematical finding, so it must not become `REFUTED`.
 
-1. flow validity (three sub-checks from Task 2, spread inline)
-2. **the routing space was enumerated exhaustively** — `routings.length === Number(total)` and `exhaustive`
-3. **at least one congestion-good routing exists** — the DGG theorem guarantees this; failure means our code or the instance is wrong
-4. **every congestion-good routing costs more than the fractional flow**
+Only when the space was fully enumerated and a congestion-good routing exists is the cost check appended — the single check that decides CONFIRMED versus REFUTED.
+
+**A note on testing the CONFIRMED path.** You cannot hand-build a valid instance that yields `CONFIRMED`: doing so would mean constructing a counterexample to Goemans' conjecture, which is the open problem that stood for thirty years. Do not try, and do not weaken a fixture until it goes green. The CONFIRMED branch is unit-tested through `scoreRoutings` instead, and Task 6 attempts to find a real instance.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -766,11 +767,13 @@ Create `test/problems/dgg.test.js`:
 ```js
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { verify, problem, conjecture } from '../../src/problems/dgg/index.js';
+import { verify, scoreRoutings, problem, conjecture } from '../../src/problems/dgg/index.js';
+import { parseNetwork } from '../../src/problems/dgg/graph.js';
+import { cmp, toString } from '../../src/exact/rational.js';
 import { VERDICT } from '../../src/harness/verdict.js';
 import { FixtureError } from '../../src/harness/schema.js';
 
-// One terminal, one route, cost matches the fractional flow exactly: the
+// One terminal, one route, routing cost equal to the fractional cost: the
 // conjecture holds here, so a counterexample claim must be REFUTED.
 const holds = {
   problem: 'dgg',
@@ -797,34 +800,36 @@ test('an instance where the conjecture holds is REFUTED as a counterexample', ()
   assert.equal(result.verdict, VERDICT.REFUTED);
   const costCheck = result.checks.find((c) => c.name.includes('costs more'));
   assert.equal(costCheck.pass, false);
+  assert.equal(costCheck.actual, '3');
+  assert.equal(costCheck.expected, '> 3');
 });
 
-test('verification requires search, and reports exhaustiveness honestly', () => {
+test('verification requires search and reports exhaustiveness honestly', () => {
   const result = verify(holds);
   assert.equal(result.requiresSearch, true);
   assert.equal(result.exhaustive, true);
   assert.equal(result.searched, 1);
 });
 
-test('the DGG theorem sanity check passes on a valid instance', () => {
-  const result = verify(holds);
-  const sanity = result.checks.find((c) => c.name.includes('congestion-good routing exists'));
-  assert.equal(sanity.pass, true);
-});
-
-test('I1: a budget too small to enumerate yields INDETERMINATE, never CONFIRMED', () => {
+test('I1: a budget too small to enumerate is INDETERMINATE, not REFUTED', () => {
   const result = verify({ ...holds, budget: '0' });
   assert.equal(result.verdict, VERDICT.INDETERMINATE);
   assert.equal(result.exhaustive, false);
+  assert.equal(result.searched, null);
+  // The cost check must be absent, not present-and-failing: "we did not look"
+  // is a different statement from "the claim is false".
+  assert.equal(result.checks.some((c) => c.name.includes('costs more')), false);
+  assert.ok(result.checks.every((c) => c.pass));
 });
 
-test('an invalid fractional flow fails a check rather than throwing', () => {
+test('an invalid fractional flow is REFUTED without searching', () => {
   const result = verify({
     ...holds,
     data: { ...holds.data, terminals: [{ node: 't1', demand: '4' }] },
   });
   assert.equal(result.verdict, VERDICT.REFUTED);
   assert.ok(result.checks.some((c) => !c.pass && c.name.includes('terminal')));
+  assert.equal(result.searched, null);
 });
 
 test('malformed network data throws FixtureError, never returns a verdict', () => {
@@ -832,36 +837,56 @@ test('malformed network data throws FixtureError, never returns a verdict', () =
   assert.throws(() => verify({ ...holds, data: null }), FixtureError);
 });
 
-test('a fixture whose budget is not a positive integer string throws FixtureError', () => {
+test('a budget that is not a non-negative integer string throws FixtureError', () => {
   assert.throws(() => verify({ ...holds, budget: 5 }), FixtureError);
   assert.throws(() => verify({ ...holds, budget: '-1' }), FixtureError);
 });
 
-test('mechanism test: CONFIRMED when every congestion-good routing costs more', () => {
-  // Two terminals sharing a cheap arc whose fractional flow is too small to
-  // carry either demand alone once D is added, forcing both onto the dear arc.
-  // This exercises the CONFIRMED path. It is NOT a claimed counterexample to
-  // Goemans' conjecture -- see fixtures/dgg/ for instances that make that claim.
-  const result = verify({
-    ...holds,
-    expect: 'CONFIRMED',
-    data: {
-      source: 's',
-      nodes: ['s', 'm', 't1'],
-      arcs: [
-        { from: 's', to: 'm', cost: '1', flow: '1' },
-        { from: 'm', to: 't1', cost: '1', flow: '1' },
-        { from: 's', to: 't1', cost: '100', flow: '0' },
-      ],
-      terminals: [{ node: 't1', demand: '1' }],
-    },
+test('scoreRoutings finds the cheapest congestion-good routing and the fractional cost', () => {
+  // A unit test of the scorer, NOT a claimed counterexample. Two parallel arcs
+  // from s to t1: a cheap one carrying the fractional flow, and a dear one.
+  const network = parseNetwork({
+    source: 's',
+    nodes: ['s', 't1'],
+    arcs: [
+      { from: 's', to: 't1', cost: '1', flow: '2' },
+      { from: 's', to: 't1', cost: '5', flow: '0' },
+    ],
+    terminals: [{ node: 't1', demand: '2' }],
   });
-  assert.equal(result.exhaustive, true);
-  assert.ok([VERDICT.CONFIRMED, VERDICT.REFUTED].includes(result.verdict));
+  const paths = [[[0], [1]]];
+
+  const both = scoreRoutings(network, paths, [[0], [1]]);
+  assert.equal(both.goodCount, 2);
+  assert.equal(toString(both.fractionalCost), '2');
+  assert.equal(toString(both.cheapestGood), '2');
+
+  // Restricted to the dear routing alone, the cheapest congestion-good routing
+  // costs more than the fractional flow. That is the shape that drives
+  // CONFIRMED, and it is the branch no valid hand-built instance can reach.
+  const dear = scoreRoutings(network, paths, [[1]]);
+  assert.equal(toString(dear.cheapestGood), '10');
+  assert.equal(cmp(dear.cheapestGood, dear.fractionalCost), 1);
+});
+
+test('scoreRoutings excludes routings that breach the congestion bound', () => {
+  // Demand 1, and a second arc whose fractional flow is 0. The bound is
+  // y_a <= x_a + D with D = 1, so a load of 2 on that arc would breach it.
+  const network = parseNetwork({
+    source: 's',
+    nodes: ['s', 't1', 't2'],
+    arcs: [
+      { from: 's', to: 't1', cost: '1', flow: '1' },
+      { from: 's', to: 't2', cost: '1', flow: '1' },
+    ],
+    terminals: [{ node: 't1', demand: '1' }, { node: 't2', demand: '1' }],
+  });
+  const paths = [[[0]], [[1]]];
+  const scored = scoreRoutings(network, paths, [[0, 0]]);
+  assert.equal(scored.goodCount, 1);
+  assert.equal(toString(scored.cheapestGood), '2');
 });
 ```
-
-**Note for the implementer:** the final test asserts only that the module runs and reports honestly on that shape, because whether that specific instance is congestion-good depends on arithmetic you should not pre-judge. After implementing, compute the actual verdict, then tighten that final assertion to the exact verdict your implementation produces **and add a comment explaining why that verdict is mathematically correct for that instance**. If you cannot justify it, say so in your report rather than asserting it.
 
 - [ ] **Step 2: Run test to verify it fails**
 
@@ -876,7 +901,7 @@ Create `src/problems/dgg/index.js`:
 import { parseNetwork, flowChecks } from './graph.js';
 import { simplePaths, enumerateRoutings } from './enumerate.js';
 import { add, mul, cmp, ZERO, toString } from '../../exact/rational.js';
-import { decide } from '../../harness/verdict.js';
+import { VERDICT, decide } from '../../harness/verdict.js';
 import { FixtureError } from '../../harness/schema.js';
 
 export const problem = 'dgg';
@@ -901,26 +926,12 @@ function readBudget(fixture) {
   return BigInt(fixture.budget);
 }
 
-export function verify(fixture) {
-  const network = parseNetwork(fixture && fixture.data);
-  const budget = readBudget(fixture);
-  const checks = [...flowChecks(network)];
-
-  const pathsPerTerminal = network.terminals.map((t) => simplePaths(network, network.source, t.node));
-  const { routings, total, exhaustive } = enumerateRoutings(pathsPerTerminal, budget);
-
-  const enumeratedAll = exhaustive && routings.length === Number(total);
-  checks.push({
-    name: 'routing space enumerated exhaustively',
-    pass: enumeratedAll,
-    expected: `${total} routings`,
-    actual: exhaustive ? `${routings.length} routings` : `budget ${budget} exceeded`,
-  });
-
+export function scoreRoutings(network, pathsPerTerminal, routings) {
   const fractionalCost = network.arcs.reduce((sum, arc) => add(sum, mul(arc.cost, arc.flow)), ZERO);
 
   let cheapestGood = null;
   let goodCount = 0;
+
   for (const routing of routings) {
     const load = network.arcs.map(() => ZERO);
     routing.forEach((pathIndex, terminalIndex) => {
@@ -930,6 +941,8 @@ export function verify(fixture) {
       }
     });
 
+    // The congestion bound is per-arc and relative to the fractional flow
+    // itself: y_a <= x_a + D. It is not a flat budget.
     const congestionGood = network.arcs.every(
       (arc, i) => cmp(load[i], add(arc.flow, network.maxDemand)) <= 0,
     );
@@ -942,29 +955,69 @@ export function verify(fixture) {
     }
   }
 
-  // The DGG theorem guarantees a congestion-good routing exists. If none is
-  // found on an exhaustively enumerated space, our code or the instance is
-  // wrong -- this is never a mathematical finding.
-  checks.push({
-    name: 'at least one congestion-good routing exists (DGG theorem)',
-    pass: !enumeratedAll || goodCount > 0,
-    expected: '>= 1',
-    actual: enumeratedAll ? `${goodCount}` : 'not established',
-  });
+  return { goodCount, cheapestGood, fractionalCost };
+}
+
+export function verify(fixture) {
+  const network = parseNetwork(fixture && fixture.data);
+  const budget = readBudget(fixture);
+  const checks = [...flowChecks(network)];
+
+  // Exit 1: an invalid instance is settled before any search.
+  if (checks.some((check) => !check.pass)) {
+    return {
+      checks,
+      requiresSearch: true,
+      exhaustive: false,
+      searched: null,
+      verdict: VERDICT.REFUTED,
+    };
+  }
+
+  const pathsPerTerminal = network.terminals.map((t) => simplePaths(network, network.source, t.node));
+  const { routings, total, exhaustive } = enumerateRoutings(pathsPerTerminal, budget);
+  const enumeratedAll = exhaustive && routings.length === Number(total);
+
+  // Exit 2 (I1): we cannot speak about "every routing" without having seen
+  // every routing. Append no further checks -- expressing this as a FAILED
+  // check would make decide() return REFUTED, turning "we did not look" into
+  // "the claim is false".
+  if (!enumeratedAll) {
+    return {
+      checks,
+      requiresSearch: true,
+      exhaustive: false,
+      searched: null,
+      verdict: decide({ checks, requiresSearch: true, exhaustive: false }),
+    };
+  }
+
+  const { goodCount, cheapestGood, fractionalCost } = scoreRoutings(network, pathsPerTerminal, routings);
+
+  // Exit 3 (I3): the DGG theorem guarantees a congestion-good routing exists
+  // for any feasible fractional flow. Finding none means our enumerator or the
+  // instance is wrong -- our failure, so ERROR, never REFUTED.
+  if (goodCount === 0) {
+    throw new FixtureError(
+      'no congestion-good routing exists, which contradicts the Dinitz-Garg-Goemans theorem: ' +
+        'the instance or the enumerator is wrong',
+      'malformed',
+    );
+  }
 
   checks.push({
     name: 'every congestion-good routing costs more than the fractional flow',
-    pass: enumeratedAll && cheapestGood !== null && cmp(cheapestGood, fractionalCost) > 0,
+    pass: cmp(cheapestGood, fractionalCost) > 0,
     expected: `> ${toString(fractionalCost)}`,
-    actual: cheapestGood === null ? 'no congestion-good routing' : toString(cheapestGood),
+    actual: toString(cheapestGood),
   });
 
   return {
     checks,
     requiresSearch: true,
-    exhaustive: enumeratedAll,
-    searched: exhaustive ? routings.length : null,
-    verdict: decide({ checks, requiresSearch: true, exhaustive: enumeratedAll }),
+    exhaustive: true,
+    searched: routings.length,
+    verdict: decide({ checks, requiresSearch: true, exhaustive: true }),
   };
 }
 ```
@@ -985,10 +1038,10 @@ export const PROBLEMS = new Map([
 ]);
 ```
 
-- [ ] **Step 5: Run tests, then tighten the final assertion**
+- [ ] **Step 5: Run test to verify it passes**
 
 Run: `node --test test/problems/dgg.test.js`
-Expected: PASS. Then follow the note in Step 1 — determine the actual verdict of the mechanism test's instance, justify it mathematically, and replace the loose assertion with the exact verdict plus a comment.
+Expected: PASS, 9 tests
 
 - [ ] **Step 6: Run the whole suite**
 
