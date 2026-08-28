@@ -1,0 +1,14 @@
+{
+  "name": "calculator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Exact-arithmetic verification of published mathematical counterexamples",
+  "scripts": {
+    "test": "node --test",
+    "verify": "node bin/verify.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
