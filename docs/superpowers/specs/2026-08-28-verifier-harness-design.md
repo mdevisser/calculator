@@ -76,6 +76,17 @@ Every problem module exports exactly one function: `verify(fixture) -> Verdict`.
 }
 ```
 
+The contract also carries `searchState`, added in M3. It exists because `requiresSearch:
+true, exhaustive: false` is ambiguous: a module may have stopped before searching (the
+instance was already refuted), been capped by a budget, or had no candidate data at all.
+Those are different facts and the results page must not conflate them — displaying a
+false search state is worse than displaying none. The runner moves it to the capped
+state alongside any I1 downgrade, so a module that bypasses `decide()` cannot leave a
+stale one behind.
+
+Known residue: `exhaustive`, `requiresSearch` and `searchState` overlap, and nothing
+asserts they stay mutually consistent. A runner-level assertion is worth adding.
+
 Two invariants, which are the point of the whole design:
 
 **I1 — A universal claim not exhaustively established returns `INDETERMINATE`, never
