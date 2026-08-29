@@ -1,5 +1,5 @@
 import { toBigIntStrict, ipow } from '../../exact/integer.js';
-import { decide } from '../../harness/verdict.js';
+import { SEARCH_STATE, decide } from '../../harness/verdict.js';
 import { FixtureError } from '../../harness/schema.js';
 
 // Spec 5 lists "all terms positive integers" among the checks, so a term that is
@@ -89,6 +89,7 @@ export function verify(fixture) {
     requiresSearch: false,
     exhaustive: null,
     searched: null,
+    searchState: SEARCH_STATE.NOT_REQUIRED,
     verdict: decide({ checks, requiresSearch: false }),
   };
 }

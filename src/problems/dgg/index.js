@@ -1,7 +1,7 @@
 import { parseNetwork, flowChecks } from './graph.js';
 import { simplePaths, enumerateRoutings } from './enumerate.js';
 import { add, mul, cmp, ZERO, toString } from '../../exact/rational.js';
-import { VERDICT, decide } from '../../harness/verdict.js';
+import { VERDICT, SEARCH_STATE, decide } from '../../harness/verdict.js';
 import { FixtureError } from '../../harness/schema.js';
 
 export const problem = 'dgg';
@@ -63,13 +63,16 @@ export function verify(fixture) {
   const budget = readBudget(fixture);
   const checks = [...flowChecks(network)];
 
-  // Exit 1: an invalid instance is settled before any search.
+  // Exit 1: an invalid instance is settled before any search. Nothing was
+  // capped here and nothing ran out of budget, so it says so: NOT_REACHED, not
+  // CAPPED. The two used to be indistinguishable downstream.
   if (checks.some((check) => !check.pass)) {
     return {
       checks,
       requiresSearch: true,
       exhaustive: false,
       searched: null,
+      searchState: SEARCH_STATE.NOT_REACHED,
       verdict: VERDICT.REFUTED,
     };
   }
@@ -88,6 +91,7 @@ export function verify(fixture) {
       requiresSearch: true,
       exhaustive: false,
       searched: null,
+      searchState: SEARCH_STATE.CAPPED,
       verdict: decide({ checks, requiresSearch: true, exhaustive: false }),
     };
   }
@@ -117,6 +121,7 @@ export function verify(fixture) {
     requiresSearch: true,
     exhaustive: true,
     searched: routings.length,
+    searchState: SEARCH_STATE.COMPLETE,
     verdict: decide({ checks, requiresSearch: true, exhaustive: true }),
   };
 }

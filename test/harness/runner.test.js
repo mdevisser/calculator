@@ -5,7 +5,7 @@ import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { runFixture, runAll } from '../../src/harness/runner.js';
-import { VERDICT } from '../../src/harness/verdict.js';
+import { VERDICT, SEARCH_STATE } from '../../src/harness/verdict.js';
 import { PROBLEMS } from '../../src/harness/registry.js';
 
 const FIXTURES = fileURLToPath(new URL('../../fixtures', import.meta.url));
@@ -55,6 +55,8 @@ test('an unsourced fixture is INDETERMINATE with a reason, not an error', () => 
   const result = runFixture(fixture, 'euler/x');
   assert.equal(result.verdict, VERDICT.INDETERMINATE);
   assert.equal(result.reason, 'missing-source-data');
+  // Nothing was searched and nothing was capped: there was no data to search.
+  assert.equal(result.searchState, null);
 });
 
 test('every result records whether it matched its declared expectation', () => {
@@ -90,6 +92,9 @@ test('I1: the runner downgrades a CONFIRMED claim whose search was not exhaustiv
   const result = runFixture(base({ problem: 'stub' }), 'stub/x');
   assert.equal(result.verdict, VERDICT.INDETERMINATE);
   assert.equal(result.reason, 'non-exhaustive-search');
+  // The downgrade must move the reported search state with it, or the page
+  // would show an indeterminate verdict beside whatever the stub claimed.
+  assert.equal(result.searchState, SEARCH_STATE.CAPPED);
 });
 
 test('the runner leaves an exhaustive CONFIRMED claim alone', (t) => {
@@ -112,6 +117,7 @@ test('the runner leaves an exhaustive CONFIRMED claim alone', (t) => {
 test('a genuine euler result requires no search and is untouched by the backstop', () => {
   const result = runFixture(base(), 'euler/x');
   assert.equal(result.requiresSearch, false);
+  assert.equal(result.searchState, SEARCH_STATE.NOT_REQUIRED);
   assert.equal(result.verdict, VERDICT.CONFIRMED);
   assert.equal(result.reason, undefined);
 });

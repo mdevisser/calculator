@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { validateFixture, FixtureError } from './schema.js';
-import { VERDICT } from './verdict.js';
+import { VERDICT, SEARCH_STATE } from './verdict.js';
 import { PROBLEMS } from './registry.js';
 
 function millisSince(startNs) {
@@ -21,7 +21,12 @@ function enforceExhaustiveness(result) {
     result.requiresSearch === true &&
     result.exhaustive !== true
   ) {
-    return { ...result, verdict: VERDICT.INDETERMINATE, reason: 'non-exhaustive-search' };
+    return {
+      ...result,
+      verdict: VERDICT.INDETERMINATE,
+      reason: 'non-exhaustive-search',
+      searchState: SEARCH_STATE.CAPPED,
+    };
   }
   return result;
 }
@@ -42,6 +47,7 @@ export function runFixture(raw, fixtureName, loadError = null) {
     requiresSearch: null,
     exhaustive: null,
     searched: null,
+    searchState: null,
   };
 
   try {

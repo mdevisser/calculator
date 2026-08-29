@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { verify, scoreRoutings, problem, conjecture } from '../../src/problems/dgg/index.js';
 import { parseNetwork } from '../../src/problems/dgg/graph.js';
 import { cmp, toString } from '../../src/exact/rational.js';
-import { VERDICT } from '../../src/harness/verdict.js';
+import { VERDICT, SEARCH_STATE } from '../../src/harness/verdict.js';
 import { FixtureError } from '../../src/harness/schema.js';
 
 // One terminal, one route, routing cost equal to the fractional cost: the
@@ -44,6 +44,7 @@ test('verification requires search and reports exhaustiveness honestly', () => {
   assert.equal(result.requiresSearch, true);
   assert.equal(result.exhaustive, true);
   assert.equal(result.searched, 1);
+  assert.equal(result.searchState, SEARCH_STATE.COMPLETE);
 });
 
 test('I1: a budget too small to enumerate is INDETERMINATE, not REFUTED', () => {
@@ -55,6 +56,7 @@ test('I1: a budget too small to enumerate is INDETERMINATE, not REFUTED', () => 
   // is a different statement from "the claim is false".
   assert.equal(result.checks.some((c) => c.name.includes('costs more')), false);
   assert.ok(result.checks.every((c) => c.pass));
+  assert.equal(result.searchState, SEARCH_STATE.CAPPED);
 });
 
 test('an invalid fractional flow is REFUTED without searching', () => {
@@ -65,6 +67,11 @@ test('an invalid fractional flow is REFUTED without searching', () => {
   assert.equal(result.verdict, VERDICT.REFUTED);
   assert.ok(result.checks.some((c) => !c.pass && c.name.includes('terminal')));
   assert.equal(result.searched, null);
+  // The distinction the results page depends on: this instance was settled
+  // before any search, so it is NOT_REACHED. Reporting CAPPED here would put
+  // "verdict capped at indeterminate" beside a REFUTED verdict that was never
+  // capped by anything.
+  assert.equal(result.searchState, SEARCH_STATE.NOT_REACHED);
 });
 
 test('malformed network data throws FixtureError, never returns a verdict', () => {
@@ -187,6 +194,7 @@ test('juang-family-7-2-1: a swept instance is CONFIRMED by exhaustive enumeratio
 
   assert.equal(result.verdict, VERDICT.CONFIRMED);
   assert.equal(result.exhaustive, true);
+  assert.equal(result.searchState, SEARCH_STATE.COMPLETE);
   const costCheck = result.checks.find((c) => c.name.includes('costs more'));
   assert.ok(costCheck);
   assert.equal(costCheck.pass, true);

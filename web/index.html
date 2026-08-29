@@ -88,6 +88,23 @@
     return n;
   };
 
+  // I2: the exhaustiveness cell is never blank, and it reports the state the
+  // module declared rather than reconstructing one from booleans. That
+  // reconstruction is what labelled a row refuted before any search, and a row
+  // with no data to search at all, "capped at indeterminate" — a cap that
+  // never happened.
+  function exhaustivenessLabel(r) {
+    if (r.verdict === 'ERROR') return 'n/a — no verification ran';
+    if (r.reason === 'missing-source-data') return 'n/a — no candidate data to search';
+    switch (r.searchState) {
+      case 'not-required': return 'not required — the claim needs no search';
+      case 'not-reached': return 'no search — refuted before searching began';
+      case 'complete': return 'yes (' + r.searched + ' searched)';
+      case 'capped': return 'NO — verdict capped at indeterminate';
+      default: return 'unreported';
+    }
+  }
+
   const summary = document.getElementById('summary');
   if (!report) {
     summary.textContent = 'No results yet. Run: node bin/verify.js --all';
@@ -148,18 +165,7 @@
         }
         tr.appendChild(verdict);
 
-        // I2: exhaustiveness state is never omitted. An ERROR row has no
-        // exhaustiveness state to report — nothing was capped, nothing ran —
-        // so it says so rather than borrowing the capped-verdict label.
-        const exh = el('td', 'prov');
-        exh.textContent = r.verdict === 'ERROR'
-          ? 'n/a — no verification ran'
-          : r.requiresSearch === false
-            ? 'not required'
-            : r.exhaustive === true
-              ? 'yes (' + r.searched + ' searched)'
-              : 'NO — verdict capped at indeterminate';
-        tr.appendChild(exh);
+        tr.appendChild(el('td', 'prov', exhaustivenessLabel(r)));
 
         // I2: provenance is never omitted.
         const prov = el('td', 'prov');

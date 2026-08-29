@@ -48,6 +48,7 @@ globalThis.RESULTS = {
       "requiresSearch": true,
       "exhaustive": true,
       "searched": 8,
+      "searchState": "complete",
       "verdict": "CONFIRMED",
       "conjecture": "Goemans' cost conjecture on single-source unsplittable flow. The Dinitz-Garg-Goemans theorem (1999) is proven and not in question: given a feasible fractional flow x, an unsplittable routing always exists with y_a <= x_a + D on every arc, where D is the largest single demand. Goemans conjectured that such a routing can also be no more expensive than x. Only that cost strengthening is refuted.",
       "asExpected": true
@@ -87,6 +88,7 @@ globalThis.RESULTS = {
       "requiresSearch": true,
       "exhaustive": false,
       "searched": null,
+      "searchState": "not-reached",
       "verdict": "REFUTED",
       "conjecture": "Goemans' cost conjecture on single-source unsplittable flow. The Dinitz-Garg-Goemans theorem (1999) is proven and not in question: given a feasible fractional flow x, an unsplittable routing always exists with y_a <= x_a + D on every arc, where D is the largest single demand. Goemans conjectured that such a routing can also be no more expensive than x. Only that cost strengthening is refuted.",
       "asExpected": true
@@ -107,6 +109,7 @@ globalThis.RESULTS = {
       "requiresSearch": null,
       "exhaustive": null,
       "searched": null,
+      "searchState": null,
       "verdict": "INDETERMINATE",
       "reason": "missing-source-data",
       "asExpected": true
@@ -152,6 +155,7 @@ globalThis.RESULTS = {
       "requiresSearch": true,
       "exhaustive": true,
       "searched": 1,
+      "searchState": "complete",
       "verdict": "REFUTED",
       "conjecture": "Goemans' cost conjecture on single-source unsplittable flow. The Dinitz-Garg-Goemans theorem (1999) is proven and not in question: given a feasible fractional flow x, an unsplittable routing always exists with y_a <= x_a + D on every arc, where D is the largest single demand. Goemans conjectured that such a routing can also be no more expensive than x. Only that cost strengthening is refuted.",
       "asExpected": true
@@ -197,6 +201,7 @@ globalThis.RESULTS = {
       "requiresSearch": false,
       "exhaustive": null,
       "searched": null,
+      "searchState": "not-required",
       "verdict": "CONFIRMED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
       "asExpected": true
@@ -242,6 +247,7 @@ globalThis.RESULTS = {
       "requiresSearch": false,
       "exhaustive": null,
       "searched": null,
+      "searchState": "not-required",
       "verdict": "CONFIRMED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
       "asExpected": true
@@ -287,6 +293,7 @@ globalThis.RESULTS = {
       "requiresSearch": false,
       "exhaustive": null,
       "searched": null,
+      "searchState": "not-required",
       "verdict": "REFUTED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
       "asExpected": true
@@ -332,6 +339,7 @@ globalThis.RESULTS = {
       "requiresSearch": false,
       "exhaustive": null,
       "searched": null,
+      "searchState": "not-required",
       "verdict": "REFUTED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
       "asExpected": true
