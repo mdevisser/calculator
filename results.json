@@ -15,7 +15,7 @@
       "expect": "CONFIRMED",
       "source": {
         "url": "https://x.com/basedjensen/status/2080020575968543230",
-        "author": "Derived from an unverified social-media follow-up describing a three-parameter (b, m, g) family attributed to Juang, following Rybin's announcement; the arcs, costs, and constraints here are this repository's transcription of that post, not a verified primary source. Confirmed locally by exhaustive enumeration over all 8 congestion-good routings for b=7, m=2, g=1.",
+        "author": "Derived from an unverified social-media follow-up describing a three-parameter (b, m, g) family attributed to Juang, following Rybin's announcement; the arcs, costs, and constraints here are this repository's transcription of that post, not a verified primary source. Confirmed locally by exhaustive enumeration of all 8 unsplittable routings for b=7, m=2, g=1, of which 4 are congestion-good.",
         "date": "2026-08-28",
         "peerReviewed": false
       },
