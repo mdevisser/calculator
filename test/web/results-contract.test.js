@@ -117,3 +117,17 @@ test('the page has a label for every search state the harness can report', async
     assert.notEqual(text, 'unreported', `the page has no label for ${state}`);
   }
 });
+
+// source.note is optional provenance detail. The page must render it when it
+// is there and print nothing when it is not, and the fixture set exercises
+// both branches.
+test('the page renders source.note only when a fixture carries one', async () => {
+  const html = await readFile(new URL('../../web/index.html', import.meta.url), 'utf8');
+  assert.match(html, /if \(r\.source\.note\) prov\.appendChild/);
+
+  const results = await runAll(FIXTURES);
+  const withNote = results.filter((r) => r.source && r.source.note);
+  const withoutNote = results.filter((r) => r.source && !r.source.note);
+  assert.ok(withNote.length > 0, 'no fixture exercises the note branch');
+  assert.ok(withoutNote.length > 0, 'no fixture exercises the absent-note branch');
+});

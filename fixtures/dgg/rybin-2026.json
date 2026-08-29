@@ -1,12 +1,12 @@
 {
   "problem": "dgg",
   "candidate": "rybin-2026",
-  "claim": "fractional cost 58; every congestion-good unsplittable routing costs at least 60",
+  "claim": "reported by secondary coverage, not by a primary source held here: fractional cost 58, every congestion-good unsplittable routing costs at least 60. The network itself is not published there, so there is nothing to verify.",
   "expect": "INDETERMINATE",
   "status": "unsourced",
   "source": {
-    "url": "https://x.com/basedjensen/status/2080020575968543230",
-    "author": "Dmitry Rybin with GPT-5.6 Pro",
+    "url": "https://vibemathed.com/problem/dinitz-garg-goemans-unsplittable-flow",
+    "author": "secondary coverage of Dmitry Rybin with GPT-5.6 Pro; the original announcement post is not held",
     "date": "2026-07-22",
     "peerReviewed": false
   }

@@ -54,6 +54,7 @@
   .prov { font-size:.75rem; color:var(--ink-3); }
   .prov a { color:var(--accent); }
   .unrefereed { color:var(--warn); font-weight:600; }
+  .note { margin-top:.35rem; font-style:italic; max-width:44ch; }
   .surprise { color:var(--bad); font-weight:600; }
   details { margin-top:.5rem; }
   summary { cursor:pointer; font-size:.75rem; color:var(--ink-3); }
@@ -178,6 +179,9 @@
           a.href = r.source.url;
           a.rel = 'noreferrer';
           prov.appendChild(a);
+          // Optional: a caveat about what the cited artifact is and is not.
+          // Absent on most fixtures, and nothing is rendered when it is.
+          if (r.source.note) prov.appendChild(el('div', 'note', r.source.note));
         } else {
           prov.appendChild(el('span', 'empty', 'none'));
         }

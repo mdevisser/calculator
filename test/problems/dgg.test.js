@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { verify, scoreRoutings, problem, conjecture } from '../../src/problems/dgg/index.js';
 import { parseNetwork } from '../../src/problems/dgg/graph.js';
+import { simplePaths, enumerateRoutings } from '../../src/problems/dgg/enumerate.js';
 import { cmp, toString } from '../../src/exact/rational.js';
 import { VERDICT, SEARCH_STATE } from '../../src/harness/verdict.js';
 import { FixtureError } from '../../src/harness/schema.js';
@@ -198,4 +199,45 @@ test('juang-family-7-2-1: a swept instance is CONFIRMED by exhaustive enumeratio
   const costCheck = result.checks.find((c) => c.name.includes('costs more'));
   assert.ok(costCheck);
   assert.equal(costCheck.pass, true);
+});
+
+// The provenance field is mandatory under I2, so the numbers inside it are
+// part of the verdict, not decoration. It once read "all 8 congestion-good
+// routings" when 8 was the total and 4 were congestion-good.
+test('juang-family-7-2-1: the provenance note states the counts the search found', async () => {
+  const fixture = JSON.parse(
+    await readFile(
+      fileURLToPath(new URL('../../fixtures/dgg/juang-family-7-2-1.json', import.meta.url)),
+      'utf8',
+    ),
+  );
+
+  const network = parseNetwork(fixture.data);
+  const paths = network.terminals.map((t) => simplePaths(network, network.source, t.node));
+  const { routings, total } = enumerateRoutings(paths, 1000000n);
+  const { goodCount } = scoreRoutings(network, paths, routings);
+
+  const note = fixture.source.note;
+  const statedTotal = Number(note.match(/all (\d+) unsplittable routings/)[1]);
+  const statedGood = Number(note.match(/(\d+) are congestion-good/)[1]);
+
+  assert.equal(statedTotal, Number(total));
+  assert.equal(statedGood, goodCount);
+  assert.notEqual(statedTotal, statedGood, 'the two counts are not the same number');
+});
+
+// The two fixtures describe different artifacts: Rybin's announcement of the
+// counterexample, and a later post by someone else giving the family this
+// instance belongs to. They carried a byte-identical url.
+test('the juang and rybin fixtures cite different sources', async () => {
+  const read = async (name) =>
+    JSON.parse(
+      await readFile(fileURLToPath(new URL(`../../fixtures/dgg/${name}.json`, import.meta.url)), 'utf8'),
+    );
+  const juang = await read('juang-family-7-2-1');
+  const rybin = await read('rybin-2026');
+
+  assert.notEqual(juang.source.url, rybin.source.url);
+  assert.match(rybin.source.author, /secondary/i);
+  assert.match(rybin.claim, /secondary/i);
 });

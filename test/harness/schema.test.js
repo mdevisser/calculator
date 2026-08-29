@@ -91,3 +91,16 @@ test('I2: status unsourced does not waive the source requirement', () => {
 test('an unknown status is malformed', () => {
   assert.throws(() => validateFixture(valid({ status: 'draft' })), (e) => e.code === 'malformed');
 });
+
+// source.note is optional and stays optional: the required set is url, author,
+// date, peerReviewed. A fixture that carries a caveat validates, and so does
+// one that does not.
+test('source.note is optional and never required', () => {
+  const withNote = valid();
+  withNote.source.note = 'transcribed from an unrefereed post';
+  assert.equal(validateFixture(withNote).source.note, 'transcribed from an unrefereed post');
+
+  const withoutNote = valid();
+  delete withoutNote.source.note;
+  assert.doesNotThrow(() => validateFixture(withoutNote));
+});
