@@ -1,84 +1,134 @@
 # Calculator — Claude Code Context
 
-A counterexample verifier: exact-arithmetic checks of published mathematical
-counterexamples, with their provenance.
+A personal workbench for **understanding** the big AI-era math results: proofs,
+disproofs and Millennium Prize claims. It is built on an exact-arithmetic verifier that
+checks published counterexamples.
 
 **The repo name is historical, not descriptive.** It began as a four-function browser
 calculator. Don't propose renaming it.
 
+## What this is
+
+Michael is new to formal math and fascinated by the big problems AI is now taking on.
+The repo exists to help him do two things:
+
+1. **Follow the news.** When a result drops, know what was claimed, what kind of problem
+   it is, how solid it is, and whether it's a big deal.
+2. **Deconstruct how it was solved,** well enough to explain it himself.
+
+**The learning happens back and forth in Claude Code sessions in this repo.** He asks,
+Claude explains, and he pushes back. Each result gets a story-layout lesson page in
+`web/lessons/`, and that page is the record of what has been understood. There is no
+chat app and no LLM API in the repo.
+
+The authoritative design is `docs/superpowers/specs/2026-11-04-learning-workbench-design.md`.
+The verifier's own design is `docs/superpowers/specs/2026-08-28-verifier-harness-design.md`.
+
+## Teaching rules
+
+These apply both in sessions and on lesson pages. The failure Michael named is
+**getting too technical and losing him**. If a lesson loses him, the lesson is wrong.
+
+1. **Plain words first, symbols second.** Explain every symbol the first time it appears,
+   with a real-number example (`3³ = 3×3×3 = 27`).
+2. **One idea at a time.** Build up step by step and check he has followed before moving
+   on. When he's lost, go **simpler, not faster**.
+3. **Concrete before general.** Show a small worked case he can check, then state the
+   general claim.
+4. **Read before explaining.** A lesson's "key idea" and its trust label are written only
+   from primary sources (the paper, the post, the Lean repository), never from secondary
+   coverage. Until then the section stays visibly unwritten. An empty section is honest;
+   a plausible guess is not.
+5. **Every result carries a trust label and its sources.** The labels are `Refereed` ·
+   `Computer-checked proof` · `Experts say correct` · `Unverified claim`.
+6. **Sessions update the page.** A session that produces or changes lesson content
+   writes it into the lesson page.
+
+### Session workflow
+
+- When Michael says "explain <result>", start from his level, not a mathematician's.
+- Fill a lesson's `#key-idea` section (and drop its `data-pending="session"`) only once
+  he has followed the explanation in the session.
+- Flip `confirmed` to `true` in `web/lessons.js` only after reading the primary sources.
+  If they don't support the label, change the label.
+- A new result becomes a lesson only when he asks. Add it to `web/lessons.js` with
+  `available: true` once its page exists.
+
 ## Current Status
 
-**M1, M2 and M3 are shipped.** The harness runs, the CLI works, the page renders, and
-the suite is green. Two problem modules exist, `euler` and `dgg`; `jacobian/` is M4.
+**M1–M3 and P1 are shipped.** The harness and CLI run, and the suite is green. The home
+page shows the learning path, and the Euler lesson is live.
 
-- `docs/superpowers/specs/2026-08-28-verifier-harness-design.md` — the authoritative
-  design. Read it before proposing work.
-- `docs/superpowers/plans/2026-08-28-verifier-harness-m1-m2.md` — the M1–M2 plan, and
-  the two deliberate deviations from the spec recorded at its top.
-- `docs/superpowers/plans/2026-08-28-verifier-harness-m3-dgg.md` — the M3 plan.
+| | Contents |
+|---|---|
+| **M1–M3** ✅ | Exact arithmetic, harness, CLI, `euler/` and `dgg/` modules, the check ledger |
+| **P1** ✅ | Home page with the path, `lessons.js` single source of truth, shared lesson header, Euler lesson, ledger moved to `checks.html` |
+| **P2** | News watch: a weekly scheduled routine that opens a PR of news cards (spec §8) |
+| **P3** | `jacobian/` module (formerly M4: polynomial algebra, symbolic determinant) and the Jacobian lesson |
+| **P4** | Sendov lesson (drag-the-dots picture) and Navier–Stokes lesson |
+| **M5** | Real DGG and Jacobian fixtures once sourced, continuing |
+
+Plans live in `docs/superpowers/plans/`.
 
 What is on disk:
 
 | Path | What it is |
 |---|---|
-| `bin/verify.js` | CLI — `--all`, or a single `<problem>/<fixture>` |
-| `src/exact/integer.js` | strict BigInt parsing (`toBigIntStrict`) and exact powers (`ipow`) |
-| `src/exact/rational.js` | exact BigInt `p/q` rationals — fractional flows are not integral |
+| `web/index.html` | home: the learning path, and (from P2) news |
+| `web/lessons/` | one story-layout lesson per result; `euler.html` and `euler-check.js` so far |
+| `web/lessons.js` | lesson metadata: titles, path order, trust labels, `confirmed`, `checkedHere`, sources |
+| `web/lesson-model.js` | pure functions from that data (plus `RESULTS`) to what the pages render |
+| `web/lesson-header.js` | fills a lesson's trust label, "Checked here" badge and back/next nav |
+| `web/site.css` | shared tokens and styles for home and lessons |
+| `web/checks.html` | the check ledger: the verifier's verdicts, the dossier/ledger layout of the old spec §9 |
+| `web/calculator.html` | the original calculator, kept and linked |
+| `bin/verify.js` | CLI: `--all`, or a single `<problem>/<fixture>` |
+| `src/exact/` | `integer.js` (strict BigInt parsing, `ipow`) and `rational.js` (exact `p/q`) |
 | `src/harness/` | `schema.js`, `verdict.js`, `runner.js`, `report.js`, `registry.js` |
-| `src/problems/euler/` | the Euler module, `verify(fixture)` |
-| `src/problems/dgg/` | the DGG module: `index.js`, `graph.js`, `enumerate.js` |
-| `fixtures/euler/` | two published counterexamples, two negative controls |
-| `fixtures/dgg/` | one confirmed instance, one unsourced candidate, two negative controls |
-| `scripts/` | `search-juang.js`, a development sweep — not part of the verification path |
-| `test/` | `node:test`, mirroring `src/` |
-| `results.json`, `web/results.js` | generated by `--all`, committed so the page needs no build |
-| `web/index.html` | the results page — the dossier/ledger layout of spec §9 |
-| `web/calculator.html` | the original calculator, relocated at M2 and linked from the page |
+| `src/problems/` | `euler/` and `dgg/`, each exporting `verify(fixture)` |
+| `fixtures/` | published counterexamples, unsourced candidates, negative controls |
+| `results.json`, `web/results.js` | generated by `--all`, committed so the pages need no build |
+| `test/` | `node:test`, mirroring `src/` and `web/` |
 
-`src/exact/rational.js` was deferred from M1 — the spec lists it there, but Euler needs
-only integers — and arrived with `dgg/` at M3, the first module that actually needs it.
+"Checked here" appears on a lesson only when the lesson names a fixture and that
+fixture's committed verdict is `CONFIRMED`. A test enforces this.
 
 Every verdict carries a **search state** as well as a verdict: `not-required`,
-`not-reached` (settled before any search began), `complete`, or `capped`. The results
-page prints the state the module reported and never reconstructs one from
-`requiresSearch`/`exhaustive`, which is how a row refuted before any search once read
-"verdict capped at indeterminate".
+`not-reached` (settled before any search began), `complete`, or `capped`. The ledger
+prints the state the module reported and never reconstructs one from
+`requiresSearch`/`exhaustive`.
 
-The committed `results.json` is deterministic — no timestamps, no timings, so a run
-that changes nothing leaves the tree clean. A test re-runs the fixtures and asserts the
-committed artifact still matches, so a stale page fails the suite: edit a fixture,
-re-run `node bin/verify.js --all`, and commit the artifacts with it.
-
-## What this is
-
-The 2026 AI mathematics results — the Erdős unit-distance disproof, OpenAI Astra's ten
-Lean-certified proofs, Alpöge's Jacobian counterexample via Claude Fable 5, Rybin's
-Dinitz–Garg–Goemans counterexample via GPT-5.6 Pro — are all **counterexamples or
-explicit constructions, not proofs**. A model proposes a candidate object; cheap exact
-computation confirms or kills it.
-
-The verifier is the buildable half, and it is ordinary math code. This repo builds it.
+The committed `results.json` is deterministic, with no timestamps and no timings, so a
+run that changes nothing leaves the tree clean. A test re-runs the fixtures and asserts
+the committed artifact still matches, so a stale page fails the suite. If you edit a
+fixture, re-run `node bin/verify.js --all` and commit the artifacts with it.
 
 ## Tech Stack
 
-- **Node** for compute, **static page** for presentation — the shape of the Enzo
-  simulation site that prompted this direction
-- **Zero runtime dependencies**; `node:test` for tests
-- **BigInt throughout, no float path anywhere** — results depend on exact cancellation,
-  and floats would produce right answers for wrong reasons. Integers in
-  `src/exact/integer.js`, rationals in `src/exact/rational.js`
-- No network, nothing async
+- **Node** for compute, **static pages** for presentation, opened straight from disk:
+  no build step and no server.
+- **Zero runtime dependencies.** Tests use `node:test`.
+- **Browser scripts are classic scripts that assign to `globalThis`.** `file://`
+  blocks ES modules and `fetch`, so data loads by `<script src>`. Node tests import the
+  same files for their side effect.
+- **Exact arithmetic for anything that checks.** `src/` is BigInt and `Rational`
+  throughout, with no float path, because results depend on exact cancellation. Browser
+  checks (such as the Euler calculator) use BigInt too.
+- **Floats only in pictures.** Interactive visualizations (such as Sendov's
+  drag-the-dots) may use floating-point math. They carry the caption *"rounded math,
+  fine for seeing, not proof"* and never produce a verdict, a trust label, or a ✅ that
+  stands for verification.
 
 ## Architecture Decisions
 
-- **Thin shared kernel, independent problem modules.** The only shared code is exact
-  arithmetic and the verdict contract. Problem modules share no domain types with each
-  other.
-- **Not a generic conjecture framework.** Three problems is not enough evidence to
-  design an abstraction over them. Resist the urge.
+- **Thin shared kernel, independent problem modules.** The only shared verifier code is
+  exact arithmetic and the verdict contract. Problem modules share no domain types.
+- **Not a generic conjecture framework.** Resist the urge.
 - **Every problem module exports one function:** `verify(fixture) -> Verdict`.
-- Superseded: the old "single file, no build step" constraint. Zero *runtime*
-  dependencies survives; single-file does not.
+- **One source of truth for lessons.** The home path and every lesson header render from
+  `web/lessons.js`, so they cannot disagree.
+- **Proof lessons don't re-check the proof.** The repo can't verify Sendov or
+  Navier–Stokes. For those, the trust label carries the weight, and the page says so.
 
 ## Invariants — do not weaken these
 
@@ -98,39 +148,25 @@ A corollary for tests: **a verifier that always passes is worthless.** Every pro
 module ships negative fixtures that must return `REFUTED`. A mutation that doesn't flip
 the verdict proves the check it targets is inert.
 
-## Milestones
-
-| | Contents |
-|---|---|
-| **M1** ✅ | `exact/integer.js`, harness, `euler/` + fixtures + negative controls, tests, CLI |
-| **M2** ✅ | Web results page rendering `results.json`; calculator moved to `web/calculator.html` |
-| **M3** ✅ | `dgg/` — `exact/rational.js`, graph, path enumeration, exhaustiveness invariant, differential property test |
-| **M4** | `jacobian/` — polynomial algebra, symbolic determinant |
-| **M5** | Real DGG and Jacobian fixtures once sourced |
-
-Sequenced so the harness is proven on math checkable by hand (Euler's sum of powers,
-disproved by Lander & Parkin in 1966) before it meets math that isn't.
-
 ## Known Risk
 
-Building is decoupled from sourcing: each problem ships a hand-built synthetic fixture
+Building is decoupled from sourcing. Each problem ships a hand-built synthetic fixture
 whose answer is known by hand, and a fixture marked `"status": "unsourced"` returns
 `INDETERMINATE` with reason `missing-source-data`.
 
 Where DGG sourcing actually stands:
 
-- **`dgg/juang-family-7-2-1` is CONFIRMED** — a genuine counterexample instance to
-  Goemans' cost conjecture, fractional cost 125 against a cheapest congestion-good
-  routing of 126, established here by exhaustive enumeration of all 8 routings, of
-  which 4 are congestion-good. Its provenance is an unrefereed X post giving a
-  three-parameter `(b, m, g)` family; the fixture is this repo's transcription of that
+- **`dgg/juang-family-7-2-1` is CONFIRMED.** It is a genuine counterexample instance to
+  Goemans' cost conjecture: fractional cost 125 against a cheapest congestion-good
+  routing of 126. This was established here by exhaustive enumeration of all 8 routings,
+  of which 4 are congestion-good. Its provenance is an unrefereed X post giving a
+  three-parameter `(b, m, g)` family. The fixture is this repo's transcription of that
   post at `b=7, m=2, g=1`, and `source.note` says so. Verified locally, not published.
 - **`dgg/rybin-2026` remains unsourced.** We do not hold the URL of Rybin's original
   announcement, so the fixture cites secondary coverage and carries no network data.
-  It is `INDETERMINATE` with reason `missing-source-data` and will stay that way until
-  the construction itself is sourced.
 
-The Jacobian construction still appears in no secondary coverage.
+The Jacobian lesson (P3) starts on a synthetic stand-in map until the real map is
+sourced. It says so plainly and shows no "Checked here" badge until then.
 
 ## Reporting Accuracy
 
@@ -139,9 +175,12 @@ planar case remains open. A page reading "Jacobian conjecture: REFUTED" without 
 qualifier is wrong.
 
 The DGG result is **Goemans' cost conjecture**, not the Dinitz–Garg–Goemans theorem.
-The theorem (1999) — a congestion-good unsplittable routing always exists with
-`y_a <= x_a + D` — is proven and untouched. Only the cost strengthening fell. Never
+The theorem (1999), which says a congestion-good unsplittable routing always exists with
+`y_a <= x_a + D`, is proven and untouched. Only the cost strengthening fell. Never
 label this "Dinitz–Garg–Goemans: REFUTED".
+
+The Navier–Stokes claim (OpenAI, September 2026) concerns the **forced** version. It is
+an **unverified claim** whose priority is disputed. Never call it solved.
 
 ## Development
 
@@ -150,18 +189,19 @@ node bin/verify.js <problem>/<fixture>
 node bin/verify.js --all
 node --test                              # tests
 
-open web/index.html                      # no server needed
+open web/index.html                      # home, no server needed
+open web/checks.html                     # the check ledger
 python3 -m http.server 8000              # or serve, then visit /web/
 ```
 
 ## Git Conventions
 
 Follow shared conventions from dev-config: `feat:`, `fix:`, `docs:`, `chore:`,
-`refactor:`, `test:`. Keep commits focused — one concern per commit.
+`refactor:`, `test:`. Keep commits focused, with one concern per commit.
 
 ## Security
 
 No backend, no secrets, no API keys. All computation is local and offline.
 
-If an LLM proposer is ever added (explicitly out of scope for v1), its API key goes
-through 1Password per the global config — never hardcoded, never in a committed file.
+If an LLM proposer is ever added (explicitly out of scope), its API key goes through
+1Password per the global config. It is never hardcoded and never in a committed file.
