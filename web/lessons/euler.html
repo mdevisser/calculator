@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euler's Sum of Powers</title>
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<main class="wrap lesson">
+  <nav id="lesson-nav" aria-label="Lesson navigation"></nav>
+
+  <h1>Euler's sum of powers</h1>
+  <p class="sub">Four big numbers that broke a 200-year-old guess.</p>
+
+  <section id="trust" aria-label="How sure anyone is"></section>
+
+  <section id="question">
+    <h2>The question, in plain words</h2>
+    <p>A <b>cube</b> is a number multiplied by itself three times: 3³ = 3 × 3 × 3 = 27.
+      Here are three cubes that add up to another cube:</p>
+    <div class="math">3³ + 4³ + 5³ = 6³ &nbsp;→&nbsp; 27 + 64 + 125 = <b>216</b></div>
+    <p>But you can <b>never</b> do it with just <b>two</b> cubes. That's proven: it's the
+      smallest case of Fermat's Last Theorem.</p>
+
+    <h3>Euler's guess (1769)</h3>
+    <p>Leonhard Euler, one of the greatest mathematicians ever, saw a pattern and guessed:</p>
+    <div class="callout">
+      To make a 3rd power out of other 3rd powers, you need at least <b>3</b> of them.<br>
+      To make a 4th power, you need at least <b>4</b>.<br>
+      To make a 5th power, you need at least <b>5</b>. And so on, forever.
+    </div>
+
+    <h3>Why nobody could settle it</h3>
+    <p><b>Proving it true</b> means showing it holds for <i>every</i> power and <i>every</i>
+      choice of numbers. That's infinitely many cases, and nobody had a technique that could
+      cover them. Even the two-number version (Fermat) took until 1995.</p>
+    <p><b>Proving it false</b> needs just <b>one</b> example that breaks it, but the numbers
+      get huge fast. 144⁵ is about 62 <i>billion</i>, and just the ways to pick four numbers
+      under 150 come to about <b>20 million</b>. That's hopeless by hand.</p>
+  </section>
+
+  <section id="found">
+    <h2>What was found</h2>
+    <p>In 1966, L. J. Lander and T. R. Parkin set a CDC 6600, the fastest computer of its
+      day, to grind through the combinations. It found:</p>
+    <div class="math">27⁵ + 84⁵ + 110⁵ + 133⁵ = 144⁵ = <b>61,917,364,224</b></div>
+    <p>That's <b>four</b> fifth powers, not five, so Euler was wrong. Their paper was famously
+      about two sentences long. <b>Finding</b> it took a computer; <b>checking</b> it takes
+      one addition.</p>
+  </section>
+
+  <section id="check">
+    <h2>Check it yourself</h2>
+    <p>Change any number and watch it break.</p>
+    <form class="calc" id="calc" autocomplete="off">
+      <div class="row">
+        <div><label for="k">Power</label><input id="k" value="5" inputmode="numeric"></div>
+        <div><label for="terms">Numbers to add (commas between)</label><input id="terms" value="27, 84, 110, 133"></div>
+        <div><label for="rhs">Should equal this number to the same power</label><input id="rhs" value="144" inputmode="numeric"></div>
+      </div>
+      <output id="calc-out" aria-live="polite"></output>
+    </form>
+    <p class="sub" style="margin-top:.5rem">Every digit is kept, with no rounding anywhere.
+      Try the 4th-power one too: power <code>4</code>, numbers
+      <code>95800, 217519, 414560</code>, equals <code>422481</code>.</p>
+
+    <h3>Try it in a spreadsheet</h3>
+    <p>Open Excel, Numbers or Google Sheets and type these in exactly.</p>
+    <p><b>Part 1 · the 5th-power answer works.</b></p>
+    <div class="math mono">
+      A1: =27^5<br>A2: =84^5<br>A3: =110^5<br>A4: =133^5<br>
+      A5: =SUM(A1:A4) &nbsp;← the four added up<br>
+      A6: =144^5<br>
+      A7: =A5-A6 &nbsp;← should be 0
+    </div>
+    <p>A7 shows <b>0</b>: both sides are exactly 61,917,364,224. These numbers have 11
+      digits, small enough for a spreadsheet to keep every one.</p>
+    <p><b>Part 2 · the trap.</b> Now try a number the size of the 4th-power answer, and ask
+      a question any child can answer: a number plus 1, minus that same number, is what?</p>
+    <div class="math mono">
+      B1: =422481^4<br>
+      B2: =B1+1-B1 &nbsp;← obviously 1
+    </div>
+    <p>B2 shows <b>0</b>. B1 has 23 digits, but a spreadsheet keeps only about
+      <b>15</b>. The “+1” falls off the end, and nothing warns you.</p>
+    <div class="callout warn">
+      Small numbers: the spreadsheet is right. Big numbers: it's <b>confidently wrong</b>.
+      A rounding tool can say two things are equal when they aren't, which would be a fake
+      counterexample. That's why this workbench never rounds when it checks.
+    </div>
+    <p class="sub">We tested the same arithmetic spreadsheets use (in Node), not each
+      spreadsheet app. If yours shows something different, that's interesting in its own
+      right.</p>
+  </section>
+
+  <section id="key-idea" data-pending="session">
+    <h2>The key idea</h2>
+    <p class="pending">We'll work this out together in a session.</p>
+  </section>
+
+  <section id="why">
+    <h2>Why it matters</h2>
+    <p><b>It's the template for 2026.</b> The new AI results work exactly like this: finding
+      the example is the hard part, and checking it is easy enough for anyone.</p>
+    <p><b>A great mind's pattern can be wrong.</b> Euler was guessing from small cases. The
+      counterexample only lives among much bigger numbers.</p>
+  </section>
+
+  <section id="open">
+    <h2>What's still open</h2>
+    <p>The 4th-power case fell next. In 1986 Noam Elkies used deep theory to know
+      <i>where</i> to look, because brute force couldn't reach numbers that big (published
+      1988). For <b>6th powers and higher</b>, nobody knows yet whether Euler's guess
+      survives.</p>
+  </section>
+
+  <section id="sources">
+    <h2>Sources</h2>
+    <ul id="source-list"></ul>
+  </section>
+
+  <nav class="lesson-nav bottom" aria-label="Lesson navigation"></nav>
+</main>
+
+<script src="../results.js"></script>
+<script src="../lessons.js"></script>
+<script src="../lesson-model.js"></script>
+<script src="../lesson-header.js"></script>
+<script src="./euler-check.js"></script>
+<script>
+  renderLessonHeader('euler');
+
+  const list = document.getElementById('source-list');
+  for (const s of globalThis.LESSONS.find((l) => l.slug === 'euler').sources) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = s.url;
+    a.rel = 'noreferrer';
+    a.textContent = s.title;
+    li.appendChild(a);
+    list.appendChild(li);
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => n.toLocaleString('en-US');
+  function update() {
+    const out = $('calc-out');
+    out.textContent = '';
+    const line = (text, cls) => {
+      const d = document.createElement('div');
+      if (cls) d.className = cls;
+      d.textContent = text;
+      out.appendChild(d);
+    };
+    const terms = $('terms').value.split(',');
+    const r = checkPowerSum($('k').value, terms, $('rhs').value);
+    if (!r.ok) {
+      line(r.message, 'verdict-input');
+      return;
+    }
+    line('left side:  ' + fmt(r.lhs));
+    line('right side: ' + fmt(r.rhs));
+    line('difference: ' + fmt(r.lhs > r.rhs ? r.lhs - r.rhs : r.rhs - r.lhs));
+    if (r.equal) {
+      const k = Number($('k').value.trim());
+      // Equality alone isn't a counterexample: Euler only claimed you need at least k terms.
+      line('✅ They match exactly.', 'verdict-yes');
+      line(terms.length < k
+        ? `Only ${terms.length} numbers for power ${k}, so this breaks Euler's guess.`
+        : `But that's ${terms.length} numbers for power ${k}. Euler allowed that, so it doesn't break his guess.`);
+    } else {
+      line('❌ They don’t match.', 'verdict-no');
+    }
+  }
+  $('calc').addEventListener('input', update);
+  $('calc').addEventListener('submit', (e) => e.preventDefault());
+  update();
+</script>
+</body>
+</html>

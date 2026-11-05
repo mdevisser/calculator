@@ -16,7 +16,7 @@ test('lessons are four, positions 1-4, labels known, every lesson sourced', () =
   }
 });
 
-test('every available lesson has a page; no unavailable lesson is linked', { todo: 'euler page lands in Task 4' }, async () => {
+test('every available lesson has a page; no unavailable lesson is linked', async () => {
   for (const p of pathModel(LESSONS)) {
     if (p.href) await access(new URL(`../../web/${p.href}`, import.meta.url));
     else assert.equal(LESSONS.find((l) => l.slug === p.slug).available, false);
