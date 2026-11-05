@@ -21,7 +21,7 @@ test('every result carries the fields the page renders', async () => {
 });
 
 test('the page loads results by script assignment, not fetch', async () => {
-  const html = await readFile(new URL('../../web/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../../web/checks.html', import.meta.url), 'utf8');
   assert.match(html, /<script src="\.\/results\.js"><\/script>/);
   assert.doesNotMatch(html, /fetch\(/, 'fetch() is blocked from file:// origins');
 });
@@ -44,7 +44,7 @@ test('web/results.js carries exactly the committed report', async () => {
 });
 
 test('the page renders no field the artifact does not persist', async () => {
-  const html = await readFile(new URL('../../web/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../../web/checks.html', import.meta.url), 'utf8');
   for (const volatile of ['elapsedMs', 'generatedAt']) {
     assert.doesNotMatch(html, new RegExp(volatile), `${volatile} is not persisted`);
   }
@@ -57,7 +57,7 @@ test('the page renders no field the artifact does not persist', async () => {
 // either. The label function is lifted out of the page and run against the
 // real rows so the assertions are about what a reader actually sees.
 async function labeller() {
-  const html = await readFile(new URL('../../web/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../../web/checks.html', import.meta.url), 'utf8');
   const src = html.match(/ {2}function exhaustivenessLabel[\s\S]*?\n {2}\}/);
   assert.ok(src, 'the page should define exhaustivenessLabel');
   return new Function(`${src[0]}; return exhaustivenessLabel;`)();
@@ -122,7 +122,7 @@ test('the page has a label for every search state the harness can report', async
 // is there and print nothing when it is not, and the fixture set exercises
 // both branches.
 test('the page renders source.note only when a fixture carries one', async () => {
-  const html = await readFile(new URL('../../web/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../../web/checks.html', import.meta.url), 'utf8');
   assert.match(html, /if \(r\.source\.note\) prov\.appendChild/);
 
   const results = await runAll(FIXTURES);
