@@ -56,14 +56,16 @@
     <form class="calc" id="calc" autocomplete="off">
       <div class="row">
         <div><label for="k">Power</label><input id="k" value="5" inputmode="numeric"></div>
-        <div><label for="terms">Numbers to add (commas between)</label><input id="terms" value="27, 84, 110, 133"></div>
+        <div><label for="terms">Numbers to add (+ between)</label><input id="terms" value="27 + 84 + 110 + 133"></div>
         <div><label for="rhs">Should equal this number to the same power</label><input id="rhs" value="144" inputmode="numeric"></div>
       </div>
       <output id="calc-out" aria-live="polite"></output>
     </form>
     <p class="sub" style="margin-top:.5rem">Every digit is kept, with no rounding anywhere.
-      Try the 4th-power one too: power <code>4</code>, numbers
-      <code>95800, 217519, 414560</code>, equals <code>422481</code>.</p>
+      Try a 4th-power one too: power <code>4</code>, numbers
+      <code>95800 + 217519 + 414560</code>, equals <code>422481</code>. That's the
+      smallest one there is, found by Roger Frye in 1988 with a computer search, after
+      Elkies showed where to look.</p>
 
     <h3>Try it in a spreadsheet</h3>
     <p>Open Excel, Numbers or Google Sheets and type these in exactly.</p>
@@ -153,8 +155,7 @@
       d.textContent = text;
       out.appendChild(d);
     };
-    const terms = $('terms').value.split(',');
-    const r = checkPowerSum($('k').value, terms, $('rhs').value);
+    const r = checkPowerSum($('k').value, splitTerms($('terms').value), $('rhs').value);
     if (!r.ok) {
       line(r.message, 'verdict-input');
       return;
@@ -162,16 +163,9 @@
     line('left side:  ' + fmt(r.lhs));
     line('right side: ' + fmt(r.rhs));
     line('difference: ' + fmt(r.lhs > r.rhs ? r.lhs - r.rhs : r.rhs - r.lhs));
-    if (r.equal) {
-      const k = Number($('k').value.trim());
-      // Equality alone isn't a counterexample: Euler only claimed you need at least k terms.
-      line('✅ They match exactly.', 'verdict-yes');
-      line(terms.length < k
-        ? `Only ${terms.length} numbers for power ${k}, so this breaks Euler's guess.`
-        : `But that's ${terms.length} numbers for power ${k}. Euler allowed that, so it doesn't break his guess.`);
-    } else {
-      line('❌ They don’t match.', 'verdict-no');
-    }
+    // The model decides; the page only displays. Equality alone isn't a counterexample.
+    line(r.equal ? '✅ They match exactly.' : '❌ They don’t match.', r.equal ? 'verdict-yes' : 'verdict-no');
+    line(r.why);
   }
   $('calc').addEventListener('input', update);
   $('calc').addEventListener('submit', (e) => e.preventDefault());
