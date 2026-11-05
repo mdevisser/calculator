@@ -52,3 +52,8 @@ test('labelText and confirmed come through for every lesson', () => {
   assert.equal(p[3].labelText, 'Unverified claim');
   assert.equal(p[3].confirmed, false);
 });
+
+test('lesson-header.js imports in Node without touching the DOM', async () => {
+  await import('../../web/lesson-header.js');
+  assert.equal(typeof globalThis.renderLessonHeader, 'function');
+});
