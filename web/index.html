@@ -16,7 +16,8 @@
 
   <section id="news">
     <h2>News</h2>
-    <p>News watch arrives in a later update.</p>
+    <p class="sub">Found by the weekly watch. Labels here come from the watch, not from us reading the sources.</p>
+    <ol class="news-list" id="news-list"></ol>
   </section>
 
   <footer>
@@ -26,6 +27,8 @@
 </div>
 <script src="./lessons.js"></script>
 <script src="./lesson-model.js"></script>
+<script src="./news.js"></script>
+<script src="./news-model.js"></script>
 <script>
   const el = (tag, cls, text) => {
     const n = document.createElement(tag);
@@ -55,6 +58,58 @@
 
     li.appendChild(step);
     list.appendChild(li);
+  }
+
+  // News. "Seen" lives in this browser only; if storage is blocked, every card
+  // simply shows as new.
+  const SEEN_KEY = 'workbench.seenNews';
+  let seen = [];
+  try {
+    const raw = window.localStorage.getItem(SEEN_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(parsed)) seen = parsed;
+  } catch (e) { seen = []; }
+
+  const newsList = document.getElementById('news-list');
+  const cards = newsModel(globalThis.NEWS, seen, globalThis.TRUST_LABELS);
+  if (cards === null) {
+    newsList.appendChild(el('li', 'news-empty', "News didn't load. Run node bin/news.js and reload."));
+  } else if (cards.length === 0) {
+    newsList.appendChild(el('li', 'news-empty', 'No news yet. The weekly watch adds cards here after you merge its pull request.'));
+  }
+  for (const c of cards || []) {
+    const li = el('li', 'news-card');
+    const top = el('div', 'news-meta');
+    if (c.isNew) top.appendChild(el('span', 'news-new', 'new'));
+    top.appendChild(el('span', null, `${c.announced} · ${c.claimTypeText}`));
+    li.appendChild(top);
+    li.appendChild(el('h3', null, c.title));
+    li.appendChild(el('p', 'news-byline', c.byline));
+
+    const trust = el('div', 'news-trust');
+    const chip = el('span', 'label-chip', c.labelText);
+    if (c.isUnverified) chip.classList.add('unverified');
+    trust.appendChild(chip);
+    trust.appendChild(el('span', 'unconfirmed', 'not yet confirmed against primary sources'));
+    li.appendChild(trust);
+
+    li.appendChild(el('p', null, c.summary));
+    const links = el('p', 'news-sources');
+    c.sources.forEach((s, i) => {
+      if (i > 0) links.appendChild(document.createTextNode(' · '));
+      const a = el('a', null, s.title);
+      a.href = s.url;
+      a.rel = 'noreferrer';
+      links.appendChild(a);
+    });
+    li.appendChild(links);
+    newsList.appendChild(li);
+  }
+
+  if (cards && cards.length > 0) {
+    try {
+      window.localStorage.setItem(SEEN_KEY, JSON.stringify(cards.map((c) => c.id)));
+    } catch (e) { /* storage blocked: cards stay "new", which is harmless */ }
   }
 </script>
 </body>

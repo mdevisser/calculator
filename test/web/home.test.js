@@ -22,6 +22,31 @@ test('unavailable steps say so', () => {
   assert.match(html, /unavailable/);
 });
 
+test('home loads news by script and renders through newsModel', () => {
+  assert.match(html, /<script src="\.\/news\.js"><\/script>/);
+  assert.match(html, /<script src="\.\/news-model\.js"><\/script>/);
+  assert.match(html, /newsModel\(globalThis\.NEWS/);
+  assert.match(html, /News didn.t load/);
+  assert.match(html, /No news yet/);
+  assert.doesNotMatch(html, /innerHTML/);
+  assert.doesNotMatch(html, /News watch arrives in a later update/);
+});
+
+// Card text comes from the open web via the routine, and private browsing can
+// make localStorage throw. Either must leave the page working.
+test('every localStorage access is inside a try block', () => {
+  const uses = [...html.matchAll(/localStorage/g)];
+  assert.ok(uses.length >= 2, 'expected a read and a write');
+  for (const m of uses) {
+    const before = html.slice(0, m.index);
+    assert.ok(before.lastIndexOf('try {') > before.lastIndexOf('}'), `localStorage outside try at ${m.index}`);
+  }
+});
+
+test('news cards show the unconfirmed marker', () => {
+  assert.match(html, /not yet confirmed against primary sources/);
+});
+
 test('the ledger moved intact', async () => {
   const ledger = await readFile(new URL('../../web/checks.html', import.meta.url), 'utf8');
   assert.match(ledger, /<title>Check ledger<\/title>/);
