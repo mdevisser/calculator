@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "web/site.css"
+        ],
+        "createdAt": "2026-11-05T01:30:59.406Z",
+        "reason": "Claude: .callout is a borderless, backgroundless blockquote rule, not a card; it mirrors the existing ledger's .conjecture rule (border-left on prose) in the repo's established design"
+      }
+    ]
+  }
+}
