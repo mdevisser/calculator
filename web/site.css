@@ -82,6 +82,8 @@ a.path-step:hover { border-color:var(--accent); }
 }
 .calc .row { display:grid; grid-template-columns:5rem 1fr 1fr; gap:.75rem; }
 @media (max-width:30rem) { .calc .row { grid-template-columns:1fr; } }
+.calc .row.three { grid-template-columns:repeat(3, 1fr); }
+.calc .pick { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.75rem; }
 .calc output { display:block; margin-top:1rem; font:.875rem/1.7 var(--mono); overflow-wrap:anywhere; }
 .calc .verdict-yes { color:var(--ok); font-weight:700; }
 .calc .verdict-no { color:var(--bad); font-weight:700; }

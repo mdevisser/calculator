@@ -49,12 +49,12 @@ globalThis.LESSONS = [
     blurb: 'A formula AI found that breaks a conjecture',
     position: 2,
     kind: 'counterexample',
-    available: false,
+    available: true,
     announced: '20 July 2026',
     claimants: 'Levent Alpöge, crediting Akhil Mathew and Claude Fable 5',
     label: 'computer-checked',
     confirmed: true, // docs/sources/jacobian.md: Isabelle (AFP) and two Lean formalizations prove det ≡ −2 and the collision
-    checkedHere: null,
+    checkedHere: 'jacobian/alpoge-2026',
     sources: [
       {
         title: 'Levent Alpöge, the announcement on X (20 July 2026)',

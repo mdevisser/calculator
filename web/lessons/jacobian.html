@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jacobian Conjecture</title>
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<main class="wrap lesson">
+  <nav id="lesson-nav" aria-label="Lesson navigation"></nav>
+
+  <h1>The Jacobian conjecture (dimension ≥ 3)</h1>
+  <p class="sub">An 87-year-old guess, broken in dimension 3 and up in July 2026. The
+    two-dimensional case is still open.</p>
+
+  <section id="trust" aria-label="How sure anyone is"></section>
+
+  <section id="question">
+    <h2>The question, in plain words</h2>
+    <p>Start with a recipe that turns one number into another: <b>double it, then add
+      1</b>. Mathematicians write <code>f(x) = 2x + 1</code>. Feed it 3 and you get
+      2 × 3 + 1 = 7. Feed it 4 and you get 9.</p>
+    <p>Inputs 1 apart came out 2 apart. That's true wherever you look: this recipe
+      <b>stretches by 2 everywhere</b>. Call that its <b>stretch factor</b>. Because it
+      stretches the same amount everywhere, two different inputs can never land on the
+      same output, and you can always undo it: subtract 1, then halve.</p>
+    <p>Compare <b>squaring</b>: <code>x²</code> sends both 2 and −2 to 4. Its stretch
+      factor isn't the same everywhere. Near 0 it squashes everything flat, and that's
+      where the two sides fold onto each other.</p>
+
+    <h3>Moving to three numbers</h3>
+    <p>Now take a recipe that turns <b>three</b> numbers (x, y, z) into three numbers.
+      Think of a point in a room going to another point in the room. A tiny box of
+      starting points lands as a tiny lopsided box. Its stretch factor is how many
+      times bigger that box's volume gets. A minus sign means it's also flipped, like
+      a mirror image. Mathematicians call this number the <b>Jacobian
+      determinant</b>.</p>
+    <p>We only allow recipes built from adding, subtracting, multiplying and
+      whole-number powers, like <code>2x − 3x²y</code>. Those are called
+      <b>polynomials</b>.</p>
+
+    <h3>Keller's guess (1939)</h3>
+    <p>Ott-Heinrich Keller asked, in 1939:</p>
+    <div class="callout">
+      If a polynomial recipe has <b>the same stretch factor everywhere</b>, and it isn't
+      zero, can it ever send two different points to the same place? The guess: <b>no</b>.
+      It can always be undone by another polynomial recipe.
+    </div>
+    <p>With one number, the guess is true: the only polynomials with the same stretch
+      factor everywhere are straight lines like <code>2x + 1</code>. With two or more
+      numbers, nobody could settle it, for 87 years.</p>
+  </section>
+
+  <section id="found">
+    <h2>What was found</h2>
+    <p>On <b>20 July 2026</b>, <b>Levent Alpöge</b> posted a recipe in three numbers.
+      The announcement credits <b>Akhil Mathew</b> with prompting the question and the
+      AI system <b>Claude Fable 5</b> with work leading to the map. Here it is,
+      complete:</p>
+    <div class="math mono">
+      first&nbsp; = (1 + xy)³·z + y²·(1 + xy)·(4 + 3xy)<br>
+      second = y + 3x·(1 + xy)²·z + 3xy²·(4 + 3xy)<br>
+      third&nbsp; = 2x − 3x²y − x³z
+    </div>
+    <p>Its stretch factor is <b>−2 at every point</b>. Yet three different points all
+      land in the same place:</p>
+    <div class="math mono">
+      (0, 0, −1/4) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ (−1/4, 0, 0)<br>
+      (1, −3/2, 13/2) &nbsp;&nbsp;→ (−1/4, 0, 0)<br>
+      (−1, 3/2, 13/2) &nbsp;&nbsp;→ (−1/4, 0, 0)
+    </div>
+    <p>So Keller's guess is false in dimension 3. Adding extra numbers that the recipe
+      leaves untouched gives a counterexample in every dimension above 3 too.</p>
+    <p>Within a day, others checked it by computer, independently: two
+      <b>Lean</b> versions (Dean Cureton's and Alex Harrison's) and an
+      <b>Isabelle</b> version (Freitas Ramos, Hulak and de Queiroz). Lean and
+      Isabelle are programming languages for proofs, where a small trusted program
+      checks every step.</p>
+    <p class="sub">Not yet in a peer-reviewed journal, and Alpöge's full write-up hasn't
+      appeared. We couldn't read his post itself, so the map here comes from the three
+      computer checks, which write it identically.</p>
+  </section>
+
+  <section id="check">
+    <h2>Check it yourself</h2>
+    <p>Type any point, or pick A, B or C from above. Fractions like <code>13/2</code>
+      and decimals like <code>0.5</code> are fine.</p>
+    <form class="calc" id="jc" autocomplete="off">
+      <div class="row three">
+        <div><label for="jx">x</label><input id="jx" value="1"></div>
+        <div><label for="jy">y</label><input id="jy" value="-3/2"></div>
+        <div><label for="jz">z</label><input id="jz" value="13/2"></div>
+      </div>
+      <div class="pick" id="jc-pick" aria-label="Fill in a point from above"></div>
+      <output id="jc-out" aria-live="polite"></output>
+    </form>
+    <p class="sub" style="margin-top:.5rem">Every fraction is kept exactly, with no
+      rounding. Try your own numbers: the output moves, but the stretch factor stays
+      −2.</p>
+    <p>This workbench's own verifier checked the same map a harder way. It works out
+      the stretch factor as a formula, built from terms with up to six x's, y's and z's
+      multiplied together, and everything cancels except −2. Then it checks the three points. That's the "Checked
+      here" badge above, and the details are in the <a href="../checks.html">check
+      ledger</a>.</p>
+  </section>
+
+  <section id="key-idea" data-pending="session">
+    <h2>The key idea</h2>
+    <p class="pending">We'll work this out together in a session.</p>
+  </section>
+
+  <section id="why">
+    <h2>Why it matters</h2>
+    <p><b>Finding was hard, checking is easy.</b> Like Euler's, this is a single
+      example anyone can check: you just did. People looked for 87 years.</p>
+    <p><b>AI was credited with work leading to the map,</b> and computers had checked
+      it within a day.</p>
+  </section>
+
+  <section id="open">
+    <h2>What's still open</h2>
+    <p>The two-dimensional case: a recipe that turns two numbers into two numbers.
+      Nobody knows whether Keller's guess holds there. Also open: how the work was
+      divided between Alpöge, Mathew and the AI, and the formal write-up.</p>
+  </section>
+
+  <section id="sources">
+    <h2>Sources</h2>
+    <ul id="source-list"></ul>
+  </section>
+
+  <nav class="lesson-nav bottom" aria-label="Lesson navigation"></nav>
+</main>
+
+<script src="../results.js"></script>
+<script src="../lessons.js"></script>
+<script src="../lesson-model.js"></script>
+<script src="../lesson-header.js"></script>
+<script src="./jacobian-check.js"></script>
+<script>
+  renderLessonHeader('jacobian');
+
+  const list = document.getElementById('source-list');
+  for (const s of globalThis.LESSONS.find((l) => l.slug === 'jacobian').sources) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = s.url;
+    a.rel = 'noreferrer';
+    a.textContent = s.title;
+    li.appendChild(a);
+    list.appendChild(li);
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const inputs = [$('jx'), $('jy'), $('jz')];
+  function update() {
+    const out = $('jc-out');
+    out.textContent = '';
+    const line = (text, cls) => {
+      const d = document.createElement('div');
+      if (cls) d.className = cls;
+      d.textContent = text;
+      out.appendChild(d);
+    };
+    const r = jacobianCheck.imageOf(inputs.map((i) => i.value));
+    if (!r.ok) {
+      line(r.message, 'verdict-input');
+      return;
+    }
+    line('lands at (' + r.image.join(', ') + ')');
+    line('stretch factor here: ' + r.stretch);
+  }
+  for (const { name, point } of jacobianCheck.POINTS) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = 'Point ' + name;
+    b.addEventListener('click', () => {
+      point.forEach((v, i) => { inputs[i].value = v.replace('-', '−'); });
+      update();
+    });
+    $('jc-pick').appendChild(b);
+  }
+  $('jc').addEventListener('input', update);
+  $('jc').addEventListener('submit', (e) => e.preventDefault());
+  update();
+</script>
+</body>
+</html>
