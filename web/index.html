@@ -72,6 +72,11 @@
 
   const newsList = document.getElementById('news-list');
   const cards = newsModel(globalThis.NEWS, seen, globalThis.TRUST_LABELS);
+  // Shown so a stalled watch is visible here, not only in a cloud run log.
+  if (cards !== null) {
+    const checked = el('p', 'news-checked', `Watch last checked through ${globalThis.NEWS.checkedThrough}.`);
+    newsList.before(checked);
+  }
   if (cards === null) {
     newsList.appendChild(el('li', 'news-empty', "News didn't load. Run node bin/news.js and reload."));
   } else if (cards.length === 0) {

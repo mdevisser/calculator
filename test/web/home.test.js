@@ -43,6 +43,12 @@ test('every localStorage access is inside a try block', () => {
   }
 });
 
+// A stalled watch must be visible on the page, not only in a cloud run log.
+test('home shows how far the watch has checked', () => {
+  assert.match(html, /globalThis\.NEWS\.checkedThrough/);
+  assert.match(html, /Watch last checked through/);
+});
+
 test('news cards show the unconfirmed marker', () => {
   assert.match(html, /not yet confirmed against primary sources/);
 });

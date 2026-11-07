@@ -21,6 +21,12 @@ for (const must of [
   /dimension/,
   /Goemans/,
   /List_of_mathematical_discoveries_by_artificial_intelligence/,
+  // Review fixes: late-surfacing results, stacked PRs, silent failures, lost cards.
+  /30 days before/,
+  /open news PR/,
+  /any step/,
+  /sources fetched/,
+  /edit this PR instead of closing it/,
 ]) {
   test(`ROUTINE.md covers ${must}`, () => assert.match(md, must));
 }

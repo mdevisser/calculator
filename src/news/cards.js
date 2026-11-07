@@ -8,6 +8,7 @@ export const CLAIM_TYPES = ['proof', 'counterexample', 'construction', 'other'];
 
 const DOC_KEYS = ['checkedThrough', 'cards'];
 const CARD_KEYS = ['id', 'announced', 'title', 'claimants', 'aiSystem', 'claimType', 'label', 'summary', 'sources'];
+const SOURCE_KEYS = ['title', 'url'];
 const ID = /^\d{4}-\d{2}-[a-z0-9]+(-[a-z0-9]+)*$/;
 
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -28,7 +29,31 @@ function isHttps(url) {
   }
 }
 
-function validateCard(card, i, labelKeys) {
+// CLAUDE.md "Reporting Accuracy", checked mechanically. The cards are written by
+// an unattended agent from web text and reviewed by a beginner, so the known
+// overclaims are caught here rather than trusted to the prompt alone.
+function accuracyErrors(card) {
+  const errors = [];
+  const title = typeof card.title === 'string' ? card.title : '';
+  const summary = typeof card.summary === 'string' ? card.summary : '';
+  const text = `${title} ${summary}`;
+  if (card.label === 'unverified' && /\b(solved|proved|proven)\b/i.test(text)) {
+    errors.push('label unverified: write "claims", never "solved", "proved" or "proven"');
+  }
+  if (/navier/i.test(text) && !/forced/i.test(text)) {
+    errors.push('Navier–Stokes cards must say it is the forced version');
+  }
+  if (/jacobian/i.test(text) && !/dimension/i.test(text)) {
+    errors.push('Jacobian cards must give the dimension (the counterexample is for dimension 3 and up)');
+  }
+  const segments = [title, ...summary.split(/(?<=[.!?])\s+/)];
+  if (segments.some((s) => /dinitz/i.test(s) && /refut|disprov|counterexample|false|broke/i.test(s))) {
+    errors.push("the DGG result refutes Goemans' cost conjecture, not the Dinitz–Garg–Goemans theorem");
+  }
+  return errors;
+}
+
+function validateCard(card, i, labelKeys, checkedThrough) {
   const errors = [];
   if (!isObject(card)) return [`card ${i}: not an object`];
   const who = `card ${typeof card.id === 'string' ? card.id : i}`;
@@ -42,6 +67,9 @@ function validateCard(card, i, labelKeys) {
   else if (ID.test(card.id) && card.id.slice(0, 7) !== card.announced.slice(0, 7)) {
     err(`id month ${card.id.slice(0, 7)} differs from the announced month ${card.announced.slice(0, 7)}`);
   }
+  if (isDate(card.announced) && isDate(checkedThrough) && card.announced > checkedThrough) {
+    err(`announced ${card.announced} is after checkedThrough ${checkedThrough}`);
+  }
   if (!isText(card.title)) err('title is empty');
   if (!Array.isArray(card.claimants) || card.claimants.length === 0 || !card.claimants.every(isText)) {
     err('claimants must list at least one name');
@@ -54,10 +82,12 @@ function validateCard(card, i, labelKeys) {
     err('needs at least one source');
   } else {
     card.sources.forEach((s, j) => {
+      if (isObject(s)) for (const k of Object.keys(s)) if (!SOURCE_KEYS.includes(k)) err(`source ${j + 1}: unknown key "${k}"`);
       if (!isObject(s) || !isText(s.title)) err(`source ${j + 1} needs a title`);
       if (!isObject(s) || !isHttps(s.url)) err(`source ${j + 1} url must be https`);
     });
   }
+  for (const m of accuracyErrors(card)) err(m);
   return errors;
 }
 
@@ -73,7 +103,7 @@ export function validateNews(doc, labelKeys) {
   }
   const seen = new Set();
   doc.cards.forEach((card, i) => {
-    errors.push(...validateCard(card, i, labelKeys));
+    errors.push(...validateCard(card, i, labelKeys, doc.checkedThrough));
     if (isObject(card) && typeof card.id === 'string') {
       if (seen.has(card.id)) errors.push(`card ${card.id}: duplicate id`);
       seen.add(card.id);

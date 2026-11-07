@@ -12,7 +12,7 @@ const KEYS = Object.keys(globalThis.TRUST_LABELS);
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
 const good = () => ({
-  checkedThrough: '2026-05-31',
+  checkedThrough: '2026-10-01',
   cards: [{
     id: '2026-09-navier-stokes',
     announced: '2026-09-09',
@@ -34,10 +34,42 @@ test('a well-formed document has no errors', () => {
   assert.deepEqual(validateNews(good(), KEYS), []);
 });
 
-test('the committed seed is valid and starts the window at 2026-05-31', async () => {
+// The routine advances checkedThrough every productive run, so this must not pin
+// a date: a pinned date made every news PR fail its own `node --test`.
+test('the committed news file is valid and its window starts no earlier than the seed', async () => {
   const committed = JSON.parse(await readFile(path.join(ROOT, 'news/cards.json'), 'utf8'));
-  assert.equal(committed.checkedThrough, '2026-05-31');
   assert.deepEqual(validateNews(committed, KEYS), []);
+  assert.ok(committed.checkedThrough >= '2026-05-31', committed.checkedThrough);
+});
+
+// The CLAUDE.md Reporting Accuracy rules, enforced mechanically because an
+// unattended agent writes the cards and a beginner reviews them.
+for (const [name, mutate, rule] of [
+  ['"solved" on an unverified card', (d) => { d.cards[0].title = 'Navier–Stokes (forced) solved'; }, /unverified.*solved|claims/],
+  ['"proved" in an unverified summary', (d) => { d.cards[0].summary = 'OpenAI proved it for the forced version. Wow.'; }, /claims/],
+  ['"proven" on an unverified card', (d) => { d.cards[0].summary = 'A proven result about the forced version.'; }, /claims/],
+  ['announced after checkedThrough', (d) => { d.checkedThrough = '2026-09-01'; }, /after checkedThrough/],
+  ['Navier–Stokes without "forced"', (d) => { d.cards[0].title = 'Navier–Stokes claim'; d.cards[0].summary = 'A claimed proof. Not checked.'; }, /forced/],
+  ['Jacobian without a dimension qualifier', (d) => Object.assign(d.cards[0], { id: '2026-09-jacobian', title: 'Jacobian conjecture counterexample', summary: 'A counterexample to the Jacobian conjecture. Experts checked it.', label: 'experts-say-correct', claimType: 'counterexample' }), /dimension/],
+  ['DGG theorem called refuted', (d) => Object.assign(d.cards[0], { id: '2026-09-dgg', title: 'Dinitz–Garg–Goemans refuted', summary: 'A counterexample. Not checked.', claimType: 'counterexample' }), /Goemans' cost conjecture/],
+  ['unknown source key', (d) => { d.cards[0].sources[0].verified = true; }, /unknown/],
+]) {
+  test(`reporting accuracy: rejects ${name}`, () => {
+    const d = good();
+    mutate(d);
+    const errors = validateNews(d, KEYS);
+    assert.ok(errors.some((m) => rule.test(m)), errors.join('\n') || '(no errors)');
+  });
+}
+
+test('reporting accuracy: the honest phrasings pass', () => {
+  const d = good();
+  d.cards.push({ ...d.cards[0], id: '2026-09-jacobian', title: 'Jacobian conjecture fails in dimension 3 and up',
+    summary: 'A counterexample in dimension 3 and higher. The planar case is still open.', label: 'experts-say-correct', claimType: 'counterexample' });
+  d.cards.push({ ...d.cards[0], id: '2026-09-dgg', title: "Goemans' cost conjecture refuted",
+    summary: "A counterexample to Goemans' cost conjecture. The Dinitz–Garg–Goemans theorem itself still stands.", claimType: 'counterexample' });
+  d.cards[0].summary = 'OpenAI claims a proof for the forced version. Nobody independent has checked it.';
+  assert.deepEqual(validateNews(d, KEYS), []);
 });
 
 for (const [name, mutate, rule] of [
@@ -99,6 +131,6 @@ test('bin/news.js writes the page file for a valid document', async () => {
     cwd: ROOT, encoding: 'utf8', env: { ...process.env, NEWS_CARDS: cardsPath, NEWS_JS: outPath },
   });
   assert.equal(r.status, 0, r.stderr);
-  assert.match(r.stdout, /1 card.*checked through 2026-05-31/);
+  assert.match(r.stdout, /1 card.*checked through 2026-10-01/);
   assert.equal(await readFile(outPath, 'utf8'), newsToJs(good()));
 });
