@@ -25,8 +25,7 @@
     <p>Here's the puzzle. Start with a smooth, gentle flow, like a slowly stirred cup of
       tea. Does it stay smooth forever? Or can the swirls tighten so fast that, at some
       moment, the speed at one point becomes <b>infinite</b>? Mathematicians call that a
-      <b>blow-up</b>. A real fluid can't do that, so a blow-up would mean the equations
-      stop describing reality at that point.</p>
+      <b>blow-up</b>. If that happens, the equations stop giving a sensible answer at that point.</p>
 
     <h3>The Millennium Prize</h3>
     <p>In 2000 the Clay Mathematics Institute offered $1 million for settling this, one of
@@ -42,8 +41,7 @@
 
     <h3>Why it's hard</h3>
     <p>Energy in a fluid can pour into smaller and smaller swirls. A computer can follow
-      swirls down to some size, but a blow-up happens at a single point, smaller than any
-      computer can see. So you can't just simulate it: you need an argument that covers
+      swirls down to some size, but in a blow-up the action keeps shrinking below any size a computer can follow. So you can't just simulate it: you need an argument that covers
       every possible flow, or builds one exact flow that provably breaks.</p>
   </section>
 
@@ -52,9 +50,8 @@
     <p>On 8 September 2026, <b>OpenAI</b> published a 165-page paper, <i>Finite Time
       Blowup for Navier–Stokes</i>, produced with an unreleased internal AI model. It
       <b>claims</b> to build a fluid that starts completely still, is pushed by a smooth
-      force that acts only in a small region and for a limited time, and reaches
-      <b>infinite speed in a finite time</b>, while its total energy stays bounded. It
-      claims this holds for every thickness of fluid, and that it settles statements C
+      force that acts only in a limited region and for a limited time, and reaches
+      <b>infinite speed in a finite time</b>, while its total energy stays bounded. It claims this holds for every thickness of fluid (how thick or sticky it is, like honey versus water), and that it settles statements C
       and D: the <b>forced</b> versions.</p>
     <p>OpenAI also published a version written in <b>Lean</b>, a programming language for
       proofs where a small trusted program checks every step, and a separate claim about
@@ -63,13 +60,11 @@
       claim and still completely open.</p>
 
     <h3>Who got there first is disputed</h3>
-    <p>The same day, mathematicians <b>Tristan Buckmaster</b> (NYU) and <b>Levent
-      Alpöge</b> released their own results: blow-ups with a smooth force for three
-      related fluid equations, including the 3D Euler equations. Buckmaster's statement
-      says they had those results on 15 August and checked them in Lean on 22 August,
+    <p>On the evening of 7 September, hours before OpenAI's announcement, mathematicians <b>Tristan Buckmaster</b> (NYU) and <b>Levent Alpöge</b> made public their own results: blow-ups with a smooth force for three
+      related fluid equations, including the 3D Euler equations. Buckmaster's statement says they had the Boussinesq and Euler results on 15 August and checked them in Lean on 22 August,
       credits the basic idea to Diego Córdoba and Luis Martínez-Zoroa, and says they used
       several AI models, including OpenAI's own Codex.</p>
-    <p>Buckmaster has said OpenAI learned of their progress before announcing. OpenAI
+    <p>Buckmaster says Alpöge was tipped that news of their progress had been passed to OpenAI. OpenAI
       says its work is independent and that his use of its tools could not have
       influenced its result. Both sides are still telling different stories.</p>
   </section>
@@ -78,16 +73,12 @@
     <h2>Can anyone check it yet?</h2>
     <p>Not yet. Unlike Euler's equation, there's no single example you can add up.</p>
     <p><b>The Lean version helps, but it isn't the end.</b> Lean confirms that every step
-      of the computer version follows from the last. People outside OpenAI have rebuilt
-      it, and the checker accepts it. But Lean only checks what was typed into it. On
-      6 October, Bastounis, Circelli and Hansen argued that OpenAI's Lean version doesn't
-      match its written paper step by step. Whether the Lean statement says exactly what
+      of the computer version follows from the last.  But Lean only checks what was typed into it. On
+      6 October, Bastounis, Circelli and Hansen argued that OpenAI's Lean version does not correspond to its written proof, so the Lean check doesn't vouch for the paper. Whether the Lean statement says exactly what
       the paper and the prize mean is a job for human experts.</p>
     <p><b>Experts need time.</b> It's 165 pages of new argument. The Clay Institute's
       rules say a solution is considered only after it's published, at least <b>two
-      years</b> have passed, and the mathematical community generally accepts it. On
-      11 September the Institute said the problem "has apparently been settled" and that
-      its process "is deliberately unhurried".</p>
+      years</b> have passed, and the mathematical community generally accepts it. On 11 September the Institute acknowledged "the announcement that the Navier-Stokes problem has apparently been settled", and said its process "is deliberately unhurried".</p>
     <p>There's no picture here on purpose. A drawing of swirling water would suggest we
       understand the construction, and we don't yet.</p>
   </section>
@@ -100,10 +91,9 @@
   <section id="why">
     <h2>Why it matters</h2>
     <p><b>It's a Millennium Prize problem.</b> Only one of the seven (the Poincaré
-      conjecture) has ever been accepted as settled. If this claim holds up, an AI system
+      conjecture) has ever been accepted as resolved. If this claim holds up, an AI system
       will have produced the core of an argument at that level.</p>
-    <p><b>It's a test of how we trust AI proofs.</b> The Lean check and the written paper
-      say slightly different things, and that gap is exactly what experts are now
+    <p><b>It's a test of how we trust AI proofs.</b> A published critique argues that the Lean check and the written paper don't correspond, and that gap is exactly what experts are now
       arguing about.</p>
   </section>
 

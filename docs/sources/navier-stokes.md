@@ -56,28 +56,29 @@ So the breakdown alternatives allow a force, while the smoothness alternatives d
 - **Clay rules:** "at least two years must have passed since publication", and "the
   proposed solution must have received general acceptance in the global mathematics
   community". **P** https://www.claymath.org/millennium-problems/rules/
-- **Bastounis, Circelli and Hansen**, arXiv:2610.08144, 6 October 2026. **P**
+- **Bastounis, Circelli and Hansen**, *Navier-Stokes lost in translation: Why Lean verification of AI autoformalisation does not guarantee correct natural language proofs*, arXiv:2610.08144, 6 October 2026. **P**
   - They argue that "the formalised Lean proof does not correspond to the NL
     [natural-language] proof of blow-up".
   - That is, the Lean check does not certify the written paper.
   - They don't claim the Lean code fails to compile.
   - https://arxiv.org/abs/2610.08144
-- **Independent rebuilds of the Lean code:** coverage reports that two proof-checking
-  kernels accept it. That checks the code, not whether it matches the paper or the
-  problem. **S**
+- **Independent rebuilds of the Lean code:** search-result coverage mentions them, but
+  we have no named source, so **the page does not mention them**. **S**, unnamed
 
 ## The priority dispute
 
-- **Tristan Buckmaster's statement, 8 September 2026.** **P**
+- **Tristan Buckmaster's statement**, made public on the evening of 7 September 2026 in New York. The PDF's creation time is 2026-09-08 02:38 UTC, hours before OpenAI's noon announcement on 8 September (that time is from the Wikipedia controversy article). **P**
   https://cims.nyu.edu/~tristanb/statement.pdf
   - He and Levent Alpöge released "finite-time blowup with smooth forcing" results for
     porous media, Boussinesq and 3D incompressible Euler.
   - They obtained the Boussinesq and Euler results on 15 August, and verified them in
-    Lean on 22 August.
+    Lean on 22 August. The porous-media result came earlier.
   - Credit for the program's "basic idea" goes to Diego Córdoba and Luis
     Martínez-Zoroa.
   - He says they used several LLMs, including OpenAI's Codex.
-  - He describes outside pressure around the timing.
+  - He describes outside pressure around the timing, "with Levent having received
+    tips that information about our progress had been passed to OpenAI". That is
+    second-hand, and the page reports it as a tip.
 - **Tao's post on the Buckmaster–Alpöge results, 7 September 2026.** **P**
   https://terrytao.wordpress.com/2026/09/07/finite-time-blowup-with-smooth-forcing-term-for-the-incompressible-porous-medium-boussinesq-and-incompressible-euler-equations
 - **OpenAI's position:** independent work. On 10 September it said Buckmaster's Codex
@@ -90,7 +91,8 @@ So the breakdown alternatives allow a force, while the smoothness alternatives d
 
 ## Background used on the page (general reference, **S**)
 
-- Navier and Stokes wrote the equations in the 1800s.
+- Navier and Stokes wrote the equations in the 1800s, and engineers use them to
+  design planes and predict weather.
 - Clay offered the seven Millennium Prizes in 2000, $1 million each.
 - Only the Poincaré conjecture has been accepted as settled.
 

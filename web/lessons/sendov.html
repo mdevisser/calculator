@@ -37,7 +37,7 @@
     <h3>Sendov's guess (around 1958)</h3>
     <p>Blagovest Sendov, a Bulgarian mathematician, guessed:</p>
     <div class="callout">
-      Put all of a recipe's roots inside a circle of radius 1. Then <b>every root has a
+      Put all of a recipe's roots inside or on a circle of radius 1. Then <b>every root has a
       flat spot within distance 1 of it.</b>
     </div>
     <p>Our example sits right on the edge: roots at 1 and −1, flat spot at 0, and each
@@ -62,12 +62,10 @@
       Lean, every single step has to be justified, and a small, trusted checking program
       confirms the whole thing. If even one step is missing, it refuses.</p>
     <p>On 12 August, <b>Terence Tao</b>, one of the world's leading mathematicians,
-      published a "digestion" of the proof. He simplified it, proved a slightly stronger
-      statement, and re-checked it in Lean with an AI agent's help: about 15,000 lines,
+      published a "digestion" of the proof. He simplified it, proved a stronger statement, and re-checked it in Lean with an AI agent's help: about 15,000 lines,
       down from about 90,000. His Lean version states Sendov's conjecture in full, with no
       gaps left to fill.</p>
-    <p class="sub">Not yet in a peer-reviewed journal. Mazur notes that the Lean check
-      proves the theorem but doesn't follow his written paper line by line.</p>
+    <p class="sub">Not yet in a peer-reviewed journal. Mazur's own Lean check proves the theorem but, he notes, doesn't follow his written paper line by line.</p>
   </section>
 
   <section id="check">
@@ -84,8 +82,7 @@
         <button type="button" id="sv-reset">Reset</button>
       </div>
     </div>
-    <p class="sub">This picture uses rounded math, fine for seeing, not proof. The proof
-      is the part Lean checked.</p>
+    <p class="sub">This picture uses rounded math, fine for seeing, not proof. The proof is the part Lean checked. Four roots is also a case settled long ago (it was known up to 8 roots), so the picture shows what the guess says, not the new part of the proof.</p>
   </section>
 
   <section id="key-idea" data-pending="session">

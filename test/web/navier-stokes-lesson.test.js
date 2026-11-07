@@ -32,3 +32,32 @@ test('available, Unverified claim, confirmed from primary sources', () => {
   assert.match(urls, /claymath\.org/);
   assert.match(urls, /cims\.nyu\.edu\/~tristanb\/statement\.pdf/);
 });
+
+// Final-review fixes: each sentence below once misstated its source.
+test('Clay is quoted as describing the announcement, not judging it', () => {
+  assert.match(text, /the announcement that the Navier-Stokes problem has apparently been settled/);
+  assert.equal((text.match(/settled/g) || []).length, 1, 'any other "settled" reads as a verdict');
+});
+
+test('the priority dispute has the right order and the right sourcing', () => {
+  assert.doesNotMatch(text, /The same day/);
+  assert.match(text, /evening of 7 September/);
+  assert.match(text, /tipped/);
+  assert.doesNotMatch(text, /Buckmaster has said OpenAI learned/);
+  assert.doesNotMatch(text, /had those results on 15 August/);
+  assert.match(text, /Boussinesq and Euler results on 15 August/);
+});
+
+test('the Lean critique is stated at full strength, and unsourced claims are gone', () => {
+  assert.doesNotMatch(text, /slightly different|step by step/);
+  assert.match(text, /does not correspond to its written proof/);
+  assert.doesNotMatch(text, /People outside OpenAI have rebuilt it/);
+});
+
+test('words a beginner needs are defined, and nothing overstates the paper', () => {
+  assert.doesNotMatch(text, /small region/);
+  assert.match(text, /limited region/);
+  assert.match(text, /thick or sticky/);
+  assert.doesNotMatch(text, /a blow-up happens at a single point/);
+  assert.doesNotMatch(text, /A real fluid can.t do that/);
+});

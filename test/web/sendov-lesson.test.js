@@ -27,3 +27,12 @@ test('the label is Computer-checked proof, confirmed from primary sources', () =
   assert.match(urls, /terrytao\.wordpress\.com\/2026\/08\/12/);
   assert.match(urls, /proofatlas\.ai/);
 });
+
+// Final-review fixes: each sentence below once misstated its source.
+test('Sendov copy matches the sources', async () => {
+  const text = (await read()).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  assert.doesNotMatch(text, /slightly stronger/);
+  assert.match(text, /inside or on a circle of radius 1/);
+  assert.match(text, /Mazur's own Lean check/);
+  assert.match(text, /settled long ago/);
+});

@@ -56,7 +56,7 @@ These apply both in sessions and on lesson pages. The failure Michael named is
 
 ## Current Status
 
-**M1–M3, P1, P2 and P4 are shipped** (P4 ahead of P3, at Michael's request). The
+**M1–M3, P1, P2 and P4 are built** (P2's weekly runs are blocked; see below) (P4 ahead of P3, at Michael's request). The
 harness and CLI run, and the suite is green. The home page shows the learning path and
 the news; the Euler, Sendov and Navier–Stokes lessons are live. Jacobian is next.
 
@@ -64,7 +64,7 @@ the news; the Euler, Sendov and Navier–Stokes lessons are live. Jacobian is ne
 |---|---|
 | **M1–M3** ✅ | Exact arithmetic, harness, CLI, `euler/` and `dgg/` modules, the check ledger |
 | **P1** ✅ | Home page with the path, `lessons.js` single source of truth, shared lesson header, Euler lesson, ledger moved to `checks.html` |
-| **P2** ✅ | News watch: cards on the home page, `bin/news.js` validator, `news/ROUTINE.md`. Routine "Math news watch (calculator)" runs Mondays 08:00 Vancouver (Opus, no connectors). Its runs fail loudly until the cloud environment allows fetching web pages (Wikipedia, arXiv, …) |
+| **P2** (built, blocked) | News watch: cards on the home page, `bin/news.js` validator, `news/ROUTINE.md`. Routine "Math news watch (calculator)" runs Mondays 08:00 Vancouver (Opus, no connectors). Its runs fail loudly until the cloud environment allows fetching web pages (Wikipedia, arXiv, …) |
 | **P3** | `jacobian/` module (formerly M4: polynomial algebra, symbolic determinant) and the Jacobian lesson |
 | **P4** ✅ | Sendov lesson (drag-the-dots picture) and Navier–Stokes lesson, both from source dossiers in `docs/sources/` |
 | **M5** | Real DGG and Jacobian fixtures once sourced, continuing |
