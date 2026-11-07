@@ -12,7 +12,8 @@ for (const must of [
   /node bin\/news\.js/,
   /node --test/,
   /news\/<YYYY-MM-DD>/,
-  /gh pr list --state all/,
+  /gh api --paginate "repos\/mdevisser\/calculator\/pulls\?state=all/,
+  /gh api repos\/mdevisser\/calculator\/pulls -f/,
   /Card ids:/,
   /unverified/,
   /NEWS WATCH FAILED:/,
@@ -30,3 +31,9 @@ for (const must of [
 ]) {
   test(`ROUTINE.md covers ${must}`, () => assert.match(md, must));
 }
+
+// Cloud routine sessions block GitHub GraphQL (HTTP 403), which `gh pr list` and
+// `gh pr create` use. The first live run failed on exactly this.
+test('ROUTINE.md uses only the GitHub REST API', () => {
+  assert.doesNotMatch(md, /gh pr (list|create)/);
+});

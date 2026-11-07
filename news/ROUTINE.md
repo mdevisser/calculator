@@ -5,6 +5,10 @@ clone of `mdevisser/calculator`, on `main`. Your job: find AI-driven math result
 announced since the last run, write a news card for each new one, and open **one**
 pull request with them. Nothing reaches the site until Michael merges it.
 
+**GitHub access: REST only.** Cloud sessions block GitHub's GraphQL API, so
+the `gh pr` subcommands (listing, creating, viewing PRs) fail with HTTP 403. Use
+`gh api` against REST endpoints, exactly as written below. `git push` works normally.
+
 Follow these steps in order. Don't skip one, and don't improvise around a failure:
 report it (step 9).
 
@@ -31,10 +35,12 @@ List the pull requests. This command must succeed; if it fails (`gh` missing, no
 logged in, no network), stop and go to step 9.
 
 ```
-gh pr list --state all --json number,state,mergedAt,headRefName,body --limit 1000
+gh api --paginate "repos/mdevisser/calculator/pulls?state=all&per_page=100" \
+  --jq '.[] | select(.head.ref | startswith("news/")) | {number, state, merged_at, ref: .head.ref, body}'
 ```
 
-Keep only PRs whose `headRefName` starts with `news/`. If any of them is **open**,
+That lists every news PR (branch name starting with `news/`). If any of them has
+`state` `open`,
 stop here: don't search and don't open a second PR. Two news PRs would conflict with
 each other in `news/cards.json`. Your final message is "waiting on open news PR #<n>;
 nothing searched this week". Nothing is lost: `checkedThrough` only moves forward
@@ -83,7 +89,7 @@ Collect the card ids to skip:
 
 1. every `id` already in `news/cards.json`;
 2. every id on the `Card ids:` line of any news PR from step 2 that was **closed
-   without merging** (`state` is `CLOSED` and `mergedAt` is null). Closing a news PR
+   without merging** (`state` is `closed` and `merged_at` is null). Closing a news PR
    means "not interested"; don't write those cards again.
 
 Also skip by topic: a result already carded (or in one of those PRs) under a
@@ -120,7 +126,8 @@ No other keys. Links must be `https`.
 5. Open the PR:
 
    ```
-   gh pr create --base main --head news/<YYYY-MM-DD> --title "News: <n> new result(s) through <YYYY-MM-DD>" --body-file <file>
+   gh api repos/mdevisser/calculator/pulls -f base=main -f head=news/<YYYY-MM-DD> \
+     -f title="News: <n> new result(s) through <YYYY-MM-DD>" -F body=@<file> --jq .html_url
    ```
 
    The body has one line per card (`- <title> — <label>`), then a blank line, then
@@ -141,7 +148,7 @@ that isn't a quiet week, it's a broken run: go to step 9.
 ## 9. Fail loudly
 
 If **any step** fails (`gh` missing or not logged in, web search or fetching
-blocked, push rejected, `gh pr create` errors, tests failing), your final message
+blocked, push rejected, the PR-creating `gh api` call errors, tests failing), your final message
 must start with `NEWS WATCH FAILED:` followed by the step, the command that failed
 and its error output. Never end a run silently, never report "no new results" after
-a failure, and never claim a PR exists unless `gh pr create` printed its URL.
+a failure, and never claim a PR exists unless that `gh api` call printed its URL.
