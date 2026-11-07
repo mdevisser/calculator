@@ -47,3 +47,18 @@ test('the page states the map facts from the dossier', async () => {
   assert.match(text, /1939/);
   assert.doesNotMatch(text, /\b(solved|proven)\b/i);
 });
+
+// Final-review fixes: each assertion below once failed against the dossier or the
+// teaching rules.
+test('Jacobian copy says no more than its sources, in plain words', async () => {
+  const text = textOf(await read());
+  const titles = jacobian.sources.map((s) => s.title).join(' ');
+  assert.doesNotMatch(text, /independent/i, 'the formal checks cite and audit each other');
+  assert.doesNotMatch(titles, /independent/i);
+  assert.match(text, /Isabelle write-up says the announcement credits/);
+  assert.doesNotMatch(text, /you just did/i);
+  assert.match(text, /we found no full write-up/i);
+  assert.match(text, /that's its dimension/i);
+  assert.match(text, /xy means x × y/);
+  assert.match(text, /doubles/);
+});

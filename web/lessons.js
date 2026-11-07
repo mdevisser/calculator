@@ -69,7 +69,7 @@ globalThis.LESSONS = [
         url: 'https://github.com/deancureton/jacobian/tree/0d4a9212d874226ad81ce5a926becddfa94e6a88',
       },
       {
-        title: 'Alex Harrison, an independent Lean certificate (DrAlexHarrison/jacobian-anatomy)',
+        title: 'Alex Harrison, a second Lean certificate (DrAlexHarrison/jacobian-anatomy)',
         url: 'https://github.com/DrAlexHarrison/jacobian-anatomy/tree/74808fb2e1c1691b0007576ba0508e5e7cdcb1e3',
       },
       AI_DISCOVERIES,

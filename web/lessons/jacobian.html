@@ -31,13 +31,17 @@
 
     <h3>Moving to three numbers</h3>
     <p>Now take a recipe that turns <b>three</b> numbers (x, y, z) into three numbers.
-      Think of a point in a room going to another point in the room. A tiny box of
+      Think of a point in a room going to another point in the room. A point in a room
+      takes three numbers to pin down, so we say the room has three dimensions; how many
+      numbers make up a point, that's its dimension. A tiny box of
       starting points lands as a tiny lopsided box. Its stretch factor is how many
       times bigger that box's volume gets. A minus sign means it's also flipped, like
       a mirror image. Mathematicians call this number the <b>Jacobian
       determinant</b>.</p>
     <p>We only allow recipes built from adding, subtracting, multiplying and
-      whole-number powers, like <code>2x − 3x²y</code>. Those are called
+      whole-number powers, like <code>2x − 3x²y</code>. Written out, that's
+      2 × x − 3 × x × x × y: in this notation xy means x × y, and x² means x × x.
+      With x = 1 and y = 2 it's 2 − 6 = −4. Recipes like this are called
       <b>polynomials</b>.</p>
 
     <h3>Keller's guess (1939)</h3>
@@ -49,21 +53,23 @@
     </div>
     <p>With one number, the guess is true: the only polynomials with the same stretch
       factor everywhere are straight lines like <code>2x + 1</code>. With two or more
-      numbers, nobody could settle it, for 87 years.</p>
+      numbers, it stayed unsettled from 1939 until 2026.</p>
   </section>
 
   <section id="found">
     <h2>What was found</h2>
     <p>On <b>20 July 2026</b>, <b>Levent Alpöge</b> posted a recipe in three numbers.
-      The announcement credits <b>Akhil Mathew</b> with prompting the question and the
-      AI system <b>Claude Fable 5</b> with work leading to the map. Here it is,
+      The Isabelle write-up says the announcement credits <b>Akhil Mathew</b> with
+      prompting the question and the AI system <b>Claude Fable</b> with work leading to
+      the map. Here it is,
       complete:</p>
     <div class="math mono">
       first&nbsp; = (1 + xy)³·z + y²·(1 + xy)·(4 + 3xy)<br>
       second = y + 3x·(1 + xy)²·z + 3xy²·(4 + 3xy)<br>
       third&nbsp; = 2x − 3x²y − x³z
     </div>
-    <p>Its stretch factor is <b>−2 at every point</b>. Yet three different points all
+    <p>Its stretch factor is <b>−2 at every point</b>: every tiny box doubles in volume
+      and comes out flipped. Yet three different points all
       land in the same place:</p>
     <div class="math mono">
       (0, 0, −1/4) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ (−1/4, 0, 0)<br>
@@ -72,13 +78,13 @@
     </div>
     <p>So Keller's guess is false in dimension 3. Adding extra numbers that the recipe
       leaves untouched gives a counterexample in every dimension above 3 too.</p>
-    <p>Within a day, others checked it by computer, independently: two
+    <p>Within a day, others had checked it by computer: two
       <b>Lean</b> versions (Dean Cureton's and Alex Harrison's) and an
       <b>Isabelle</b> version (Freitas Ramos, Hulak and de Queiroz). Lean and
       Isabelle are programming languages for proofs, where a small trusted program
       checks every step.</p>
-    <p class="sub">Not yet in a peer-reviewed journal, and Alpöge's full write-up hasn't
-      appeared. We couldn't read his post itself, so the map here comes from the three
+    <p class="sub">Not yet in a peer-reviewed journal, and we found no full write-up from
+      Alpöge yet. We couldn't read his post itself, so the map here comes from the three
       computer checks, which write it identically.</p>
   </section>
 
@@ -113,7 +119,8 @@
   <section id="why">
     <h2>Why it matters</h2>
     <p><b>Finding was hard, checking is easy.</b> Like Euler's, this is a single
-      example anyone can check: you just did. People looked for 87 years.</p>
+      example anyone can check: you just checked the three points yourself. The guess
+      stood for 87 years.</p>
     <p><b>AI was credited with work leading to the map,</b> and computers had checked
       it within a day.</p>
   </section>

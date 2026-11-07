@@ -89,6 +89,12 @@ From the AFP lemma `eval_alpoge_map`, with variables x, y, z:
   **P**
 - **In one dimension it's true:** a polynomial whose derivative is a nonzero constant
   is `ax + b`, which can be undone. Standard background. **S**, general reference
+- **Unsettled 1939–2026:** coverage calls it an "87-year-old" conjecture; the AFP
+  entry gives no earlier counterexample, and the 2D case is still open. **S**
+- **Lean and Isabelle** are proof languages in which a small trusted kernel checks
+  every step (same background as the Sendov dossier). **S**, general reference
+- **Notation used on the page** (xy means x × y; x² means x × x) and the reading of
+  −2 as "volume doubles and flips" are standard background. **S**, general reference
 - **Coverage:** the Wikipedia list of AI mathematical discoveries **S**;
   arXiv:2608.19069 (a separate paper, by other authors, that discusses the example and
   notes n = 2 is open) **S**.
