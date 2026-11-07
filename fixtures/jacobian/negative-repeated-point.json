@@ -1,0 +1,36 @@
+{
+  "problem": "jacobian",
+  "candidate": "negative-repeated-point",
+  "claim": "control: Alpöge's map with the same point listed twice, which is not a collision",
+  "expect": "REFUTED",
+  "source": {
+    "url": "https://x.com/__alpoge__/status/2079028340955197566",
+    "author": "negative control, derived from Alpöge 2026",
+    "date": "2026-11-06",
+    "peerReviewed": false
+  },
+  "data": {
+    "variables": [
+      "x",
+      "y",
+      "z"
+    ],
+    "map": [
+      "(1 + x*y)^3*z + y^2*(1 + x*y)*(4 + 3*x*y)",
+      "y + 3*x*(1 + x*y)^2*z + 3*x*y^2*(4 + 3*x*y)",
+      "2*x - 3*x^2*y - x^3*z"
+    ],
+    "points": [
+      [
+        "0",
+        "0",
+        "-1/4"
+      ],
+      [
+        "0",
+        "0",
+        "-1/4"
+      ]
+    ]
+  }
+}

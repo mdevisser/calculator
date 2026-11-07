@@ -1,0 +1,36 @@
+{
+  "problem": "jacobian",
+  "candidate": "negative-zero-determinant",
+  "claim": "control: (x + y, x + y, z) sends (1,0,0) and (0,1,0) to the same point, but its Jacobian determinant is the constant 0",
+  "expect": "REFUTED",
+  "source": {
+    "url": "https://isa-afp.org/entries/Jacobian_Counterexample.html",
+    "author": "synthetic control, constructed for this repository",
+    "date": "2026-11-06",
+    "peerReviewed": false
+  },
+  "data": {
+    "variables": [
+      "x",
+      "y",
+      "z"
+    ],
+    "map": [
+      "x + y",
+      "x + y",
+      "z"
+    ],
+    "points": [
+      [
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1",
+        "0"
+      ]
+    ]
+  }
+}

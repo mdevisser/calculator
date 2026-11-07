@@ -1,0 +1,41 @@
+{
+  "problem": "jacobian",
+  "candidate": "negative-changed-coefficient",
+  "claim": "control: Alpöge's map with one coefficient changed (4 + 3*x*y becomes 5 + 3*x*y in the first component), which breaks the exact cancellation",
+  "expect": "REFUTED",
+  "source": {
+    "url": "https://x.com/__alpoge__/status/2079028340955197566",
+    "author": "negative control, derived from Alpöge 2026",
+    "date": "2026-11-06",
+    "peerReviewed": false
+  },
+  "data": {
+    "variables": [
+      "x",
+      "y",
+      "z"
+    ],
+    "map": [
+      "(1 + x*y)^3*z + y^2*(1 + x*y)*(5 + 3*x*y)",
+      "y + 3*x*(1 + x*y)^2*z + 3*x*y^2*(4 + 3*x*y)",
+      "2*x - 3*x^2*y - x^3*z"
+    ],
+    "points": [
+      [
+        "0",
+        "0",
+        "-1/4"
+      ],
+      [
+        "1",
+        "-3/2",
+        "13/2"
+      ],
+      [
+        "-1",
+        "3/2",
+        "13/2"
+      ]
+    ]
+  }
+}

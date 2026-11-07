@@ -1,7 +1,7 @@
 globalThis.RESULTS = {
   "tally": {
-    "CONFIRMED": 3,
-    "REFUTED": 4,
+    "CONFIRMED": 4,
+    "REFUTED": 9,
     "INDETERMINATE": 1,
     "ERROR": 0
   },
@@ -343,6 +343,283 @@ globalThis.RESULTS = {
       "searchState": "not-required",
       "verdict": "REFUTED",
       "conjecture": "Euler's sum of powers conjecture (1769): for k > 2, no k-th power is the sum of fewer than k positive k-th powers. Disproved for k = 5 by Lander and Parkin (1966) and for k = 4 by Elkies (1988).",
+      "asExpected": true
+    },
+    {
+      "fixture": "jacobian/alpoge-2026",
+      "problem": "jacobian",
+      "candidate": "alpoge-2026",
+      "claim": "a polynomial map of 3-dimensional space with Jacobian determinant identically -2 that sends three different points to one point, refuting the Jacobian conjecture in dimension 3 and every dimension above it; the two-dimensional case is still open",
+      "expect": "CONFIRMED",
+      "source": {
+        "url": "https://x.com/__alpoge__/status/2079028340955197566",
+        "author": "Levent Alpöge, crediting Akhil Mathew and Claude Fable 5",
+        "date": "2026-07-20",
+        "peerReviewed": false,
+        "note": "Map and points transcribed verbatim from the Isabelle AFP entry by Freitas Ramos, Hulak and de Queiroz (lemmas eval_alpoge_map and collision_point_*), which encodes Alpöge's announced map, and cross-checked term for term against the Lean files of deancureton/jacobian and DrAlexHarrison/jacobian-anatomy (docs/sources/jacobian.md). The X post itself was not read here: automated fetching was blocked."
+      },
+      "checks": [
+        {
+          "name": "the Jacobian determinant is a constant",
+          "pass": true,
+          "expected": "a constant polynomial",
+          "actual": "-2"
+        },
+        {
+          "name": "the constant is not zero",
+          "pass": true,
+          "expected": "nonzero",
+          "actual": "-2"
+        },
+        {
+          "name": "the points are all different",
+          "pass": true,
+          "expected": "3 different points",
+          "actual": "3 different points"
+        },
+        {
+          "name": "every point has the same image",
+          "pass": true,
+          "expected": "(-1/4, 0, 0)",
+          "actual": "all 3 points map to (-1/4, 0, 0)"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "searchState": "not-required",
+      "verdict": "CONFIRMED",
+      "conjecture": "The Jacobian conjecture (Keller, 1939): a polynomial map from n-dimensional space to itself whose Jacobian determinant is a nonzero constant has a polynomial inverse. A dimension 3 counterexample, announced in July 2026, refutes it in every dimension 3 and up. The two-dimensional case is still open.",
+      "asExpected": true
+    },
+    {
+      "fixture": "jacobian/negative-changed-coefficient",
+      "problem": "jacobian",
+      "candidate": "negative-changed-coefficient",
+      "claim": "control: Alpöge's map with one coefficient changed (4 + 3*x*y becomes 5 + 3*x*y in the first component), which breaks the exact cancellation",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://x.com/__alpoge__/status/2079028340955197566",
+        "author": "negative control, derived from Alpöge 2026",
+        "date": "2026-11-06",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "the Jacobian determinant is a constant",
+          "pass": false,
+          "expected": "a constant polynomial",
+          "actual": "not constant: degree 11, 10 terms"
+        },
+        {
+          "name": "the constant is not zero",
+          "pass": false,
+          "expected": "nonzero",
+          "actual": "no single value: the determinant is not constant"
+        },
+        {
+          "name": "the points are all different",
+          "pass": true,
+          "expected": "3 different points",
+          "actual": "3 different points"
+        },
+        {
+          "name": "every point has the same image",
+          "pass": false,
+          "expected": "(-1/4, 0, 0)",
+          "actual": "point 2 maps to (-11/8, 0, 0)"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "searchState": "not-required",
+      "verdict": "REFUTED",
+      "conjecture": "The Jacobian conjecture (Keller, 1939): a polynomial map from n-dimensional space to itself whose Jacobian determinant is a nonzero constant has a polynomial inverse. A dimension 3 counterexample, announced in July 2026, refutes it in every dimension 3 and up. The two-dimensional case is still open.",
+      "asExpected": true
+    },
+    {
+      "fixture": "jacobian/negative-perturbed-point",
+      "problem": "jacobian",
+      "candidate": "negative-perturbed-point",
+      "claim": "control: Alpöge's map with the third point moved (z = 13/2 becomes 7), so the images no longer agree",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://x.com/__alpoge__/status/2079028340955197566",
+        "author": "negative control, derived from Alpöge 2026",
+        "date": "2026-11-06",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "the Jacobian determinant is a constant",
+          "pass": true,
+          "expected": "a constant polynomial",
+          "actual": "-2"
+        },
+        {
+          "name": "the constant is not zero",
+          "pass": true,
+          "expected": "nonzero",
+          "actual": "-2"
+        },
+        {
+          "name": "the points are all different",
+          "pass": true,
+          "expected": "3 different points",
+          "actual": "3 different points"
+        },
+        {
+          "name": "every point has the same image",
+          "pass": false,
+          "expected": "(-1/4, 0, 0)",
+          "actual": "point 3 maps to (-5/16, -3/8, 1/2)"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "searchState": "not-required",
+      "verdict": "REFUTED",
+      "conjecture": "The Jacobian conjecture (Keller, 1939): a polynomial map from n-dimensional space to itself whose Jacobian determinant is a nonzero constant has a polynomial inverse. A dimension 3 counterexample, announced in July 2026, refutes it in every dimension 3 and up. The two-dimensional case is still open.",
+      "asExpected": true
+    },
+    {
+      "fixture": "jacobian/negative-repeated-point",
+      "problem": "jacobian",
+      "candidate": "negative-repeated-point",
+      "claim": "control: Alpöge's map with the same point listed twice, which is not a collision",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://x.com/__alpoge__/status/2079028340955197566",
+        "author": "negative control, derived from Alpöge 2026",
+        "date": "2026-11-06",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "the Jacobian determinant is a constant",
+          "pass": true,
+          "expected": "a constant polynomial",
+          "actual": "-2"
+        },
+        {
+          "name": "the constant is not zero",
+          "pass": true,
+          "expected": "nonzero",
+          "actual": "-2"
+        },
+        {
+          "name": "the points are all different",
+          "pass": false,
+          "expected": "2 different points",
+          "actual": "point 2 repeats point 1: (0, 0, -1/4)"
+        },
+        {
+          "name": "every point has the same image",
+          "pass": true,
+          "expected": "(-1/4, 0, 0)",
+          "actual": "all 2 points map to (-1/4, 0, 0)"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "searchState": "not-required",
+      "verdict": "REFUTED",
+      "conjecture": "The Jacobian conjecture (Keller, 1939): a polynomial map from n-dimensional space to itself whose Jacobian determinant is a nonzero constant has a polynomial inverse. A dimension 3 counterexample, announced in July 2026, refutes it in every dimension 3 and up. The two-dimensional case is still open.",
+      "asExpected": true
+    },
+    {
+      "fixture": "jacobian/negative-zero-determinant",
+      "problem": "jacobian",
+      "candidate": "negative-zero-determinant",
+      "claim": "control: (x + y, x + y, z) sends (1,0,0) and (0,1,0) to the same point, but its Jacobian determinant is the constant 0",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://isa-afp.org/entries/Jacobian_Counterexample.html",
+        "author": "synthetic control, constructed for this repository",
+        "date": "2026-11-06",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "the Jacobian determinant is a constant",
+          "pass": true,
+          "expected": "a constant polynomial",
+          "actual": "0"
+        },
+        {
+          "name": "the constant is not zero",
+          "pass": false,
+          "expected": "nonzero",
+          "actual": "0"
+        },
+        {
+          "name": "the points are all different",
+          "pass": true,
+          "expected": "2 different points",
+          "actual": "2 different points"
+        },
+        {
+          "name": "every point has the same image",
+          "pass": true,
+          "expected": "(1, 1, 0)",
+          "actual": "all 2 points map to (1, 1, 0)"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "searchState": "not-required",
+      "verdict": "REFUTED",
+      "conjecture": "The Jacobian conjecture (Keller, 1939): a polynomial map from n-dimensional space to itself whose Jacobian determinant is a nonzero constant has a polynomial inverse. A dimension 3 counterexample, announced in July 2026, refutes it in every dimension 3 and up. The two-dimensional case is still open.",
+      "asExpected": true
+    },
+    {
+      "fixture": "jacobian/synthetic-fold",
+      "problem": "jacobian",
+      "candidate": "synthetic-fold",
+      "claim": "control: the fold (x^2, y, z) sends (1,0,0) and (-1,0,0) to the same point, but its Jacobian determinant 2x is not constant, so it is not a counterexample",
+      "expect": "REFUTED",
+      "source": {
+        "url": "https://isa-afp.org/entries/Jacobian_Counterexample.html",
+        "author": "synthetic control, constructed for this repository",
+        "date": "2026-11-06",
+        "peerReviewed": false
+      },
+      "checks": [
+        {
+          "name": "the Jacobian determinant is a constant",
+          "pass": false,
+          "expected": "a constant polynomial",
+          "actual": "not constant: degree 1, 1 term"
+        },
+        {
+          "name": "the constant is not zero",
+          "pass": false,
+          "expected": "nonzero",
+          "actual": "no single value: the determinant is not constant"
+        },
+        {
+          "name": "the points are all different",
+          "pass": true,
+          "expected": "2 different points",
+          "actual": "2 different points"
+        },
+        {
+          "name": "every point has the same image",
+          "pass": true,
+          "expected": "(1, 0, 0)",
+          "actual": "all 2 points map to (1, 0, 0)"
+        }
+      ],
+      "requiresSearch": false,
+      "exhaustive": null,
+      "searched": null,
+      "searchState": "not-required",
+      "verdict": "REFUTED",
+      "conjecture": "The Jacobian conjecture (Keller, 1939): a polynomial map from n-dimensional space to itself whose Jacobian determinant is a nonzero constant has a polynomial inverse. A dimension 3 counterexample, announced in July 2026, refutes it in every dimension 3 and up. The two-dimensional case is still open.",
       "asExpected": true
     }
   ]
