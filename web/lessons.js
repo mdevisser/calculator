@@ -50,12 +50,30 @@ globalThis.LESSONS = [
     position: 2,
     kind: 'counterexample',
     available: false,
-    announced: 'July 2026',
-    claimants: 'Levent Alpöge and Akhil Mathew, with Claude Fable 5',
-    label: 'experts-say-correct',
-    confirmed: false,
+    announced: '20 July 2026',
+    claimants: 'Levent Alpöge, crediting Akhil Mathew and Claude Fable 5',
+    label: 'computer-checked',
+    confirmed: true, // docs/sources/jacobian.md: Isabelle (AFP) and two Lean formalizations prove det ≡ −2 and the collision
     checkedHere: null,
-    sources: [AI_DISCOVERIES],
+    sources: [
+      {
+        title: 'Levent Alpöge, the announcement on X (20 July 2026)',
+        url: 'https://x.com/__alpoge__/status/2079028340955197566',
+      },
+      {
+        title: 'Freitas Ramos, Hulak and de Queiroz, Formal Verification of an Explicit Counterexample to the Jacobian Conjecture (Isabelle AFP)',
+        url: 'https://isa-afp.org/entries/Jacobian_Counterexample.html',
+      },
+      {
+        title: 'Dean Cureton, the counterexample in Lean 4 (deancureton/jacobian)',
+        url: 'https://github.com/deancureton/jacobian/tree/0d4a9212d874226ad81ce5a926becddfa94e6a88',
+      },
+      {
+        title: 'Alex Harrison, an independent Lean certificate (DrAlexHarrison/jacobian-anatomy)',
+        url: 'https://github.com/DrAlexHarrison/jacobian-anatomy/tree/74808fb2e1c1691b0007576ba0508e5e7cdcb1e3',
+      },
+      AI_DISCOVERIES,
+    ],
   },
   {
     slug: 'sendov',

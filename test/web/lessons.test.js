@@ -85,3 +85,14 @@ test('a confirmed label cites at least one source that is not Wikipedia', () => 
 test('Navier–Stokes stays an Unverified claim', () => {
   assert.equal(LESSONS.find((l) => l.slug === 'navier-stokes').label, 'unverified');
 });
+
+test('Jacobian metadata is confirmed from primary sources', () => {
+  const j = LESSONS.find((l) => l.slug === 'jacobian');
+  assert.equal(j.label, 'computer-checked');
+  assert.equal(j.confirmed, true);
+  assert.match(j.title, /dimension ≥ 3/);
+  const urls = j.sources.map((s) => s.url).join(' ');
+  assert.match(urls, /isa-afp\.org\/entries\/Jacobian_Counterexample/);
+  assert.match(urls, /x\.com\/__alpoge__\/status\/2079028340955197566/);
+  assert.match(urls, /github\.com\/(DrAlexHarrison\/jacobian-anatomy|deancureton\/jacobian)/);
+});
