@@ -19,6 +19,7 @@ globalThis.renderLessonHeader = function renderLessonHeader(slug) {
   if (!m.confirmed) {
     trust.appendChild(el('span', 'unconfirmed', 'not yet confirmed against primary sources'));
   }
+  trust.appendChild(el('span', 'byline', m.byline));
   if (m.checkedHere) {
     const badge = el('a', 'checked-here', '✓ Checked here');
     badge.href = '../checks.html';

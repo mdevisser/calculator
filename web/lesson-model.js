@@ -37,6 +37,7 @@ globalThis.lessonHeaderModel = function lessonHeaderModel(lessons, results, slug
 
   return {
     title: lesson.title,
+    byline: `${lesson.claimants} · ${lesson.announced}`,
     labelText: globalThis.TRUST_LABELS[lesson.label],
     confirmed: lesson.confirmed,
     checkedHere,

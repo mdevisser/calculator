@@ -56,4 +56,32 @@ test('labelText and confirmed come through for every lesson', () => {
 test('lesson-header.js imports in Node without touching the DOM', async () => {
   await import('../../web/lesson-header.js');
   assert.equal(typeof globalThis.renderLessonHeader, 'function');
+  const src = await readFile(new URL('../../web/lesson-header.js', import.meta.url), 'utf8');
+  assert.match(src, /byline/);
+});
+
+test('every lesson has a date and claimants, and the header shows them', () => {
+  for (const l of LESSONS) {
+    assert.ok(typeof l.announced === 'string' && l.announced.trim(), l.slug);
+    assert.ok(typeof l.claimants === 'string' && l.claimants.trim(), l.slug);
+    assert.equal(lessonHeaderModel(LESSONS, undefined, l.slug).byline, `${l.claimants} · ${l.announced}`);
+  }
+});
+
+test('navigation skips unavailable Jacobian: euler → sendov → navier-stokes', () => {
+  const lessons = LESSONS.map((l) => ({ ...l, available: l.slug !== 'jacobian' }));
+  assert.equal(lessonHeaderModel(lessons, undefined, 'euler').next.href, 'sendov.html');
+  assert.equal(lessonHeaderModel(lessons, undefined, 'sendov').prev.href, 'euler.html');
+  assert.equal(lessonHeaderModel(lessons, undefined, 'sendov').next.href, 'navier-stokes.html');
+  assert.equal(lessonHeaderModel(lessons, undefined, 'navier-stokes').prev.href, 'sendov.html');
+});
+
+test('a confirmed label cites at least one source that is not Wikipedia', () => {
+  for (const l of LESSONS.filter((x) => x.confirmed)) {
+    assert.ok(l.sources.some((s) => !/wikipedia\.org/.test(s.url)), l.slug);
+  }
+});
+
+test('Navier–Stokes stays an Unverified claim', () => {
+  assert.equal(LESSONS.find((l) => l.slug === 'navier-stokes').label, 'unverified');
 });
