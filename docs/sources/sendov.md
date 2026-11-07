@@ -64,9 +64,10 @@ degree 2 or more lie in the closed unit disk, then each root has a critical poin
   **P** for the citation list. Tao's 2020 post:
   https://terrytao.wordpress.com/2020/12/08/sendovs-conjecture-for-sufficiently-high-degree-polynomials/
 
+- The 1D "flat spot between two roots" fact is Rolle's theorem (Michel Rolle, 1691): standard background, stated on the page as "known since the 1690s". **S** (general reference)
+
 ## Open questions we couldn't settle
 
 - Whether the 3 August (Wikipedia) or 5 August (paper) date is the first public
   posting. Mazur's X post wasn't read.
 - Any refereed publication.
-- The 1D "flat spot between two roots" fact is Rolle's theorem (Michel Rolle, 1691): standard background, stated on the page as "known since the 1690s". **S** (general reference)

@@ -91,12 +91,45 @@ globalThis.LESSONS = [
     blurb: 'A Millennium Prize claim, not yet verified',
     position: 4,
     kind: 'proof',
-    available: false,
+    available: true,
     announced: 'September 2026',
     claimants: 'OpenAI (an unreleased internal model)',
     label: 'unverified',
-    confirmed: false,
+    confirmed: true, // docs/sources/navier-stokes.md: Clay "apparently been settled… deliberately unhurried", no independent verification
     checkedHere: null,
-    sources: [AI_DISCOVERIES],
+    sources: [
+      {
+        title: 'OpenAI, Finite Time Blowup for Navier–Stokes (paper, 8 September 2026)',
+        url: 'https://cdn.openai.com/pdf/32d9f210-8b73-45e0-91bc-82a30aef8a9a/navier-stokes.pdf',
+      },
+      {
+        title: 'openai/NavierStokesAndEuler: OpenAI\'s Lean formalization',
+        url: 'https://github.com/openai/NavierStokesAndEuler',
+      },
+      {
+        title: 'C. Fefferman, the official Clay problem statement (statements A–D)',
+        url: 'https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf',
+      },
+      {
+        title: 'Clay Mathematics Institute, statement of 11 September 2026',
+        url: 'https://www.claymath.org/news/navier-stokes-announcement',
+      },
+      {
+        title: 'Clay Mathematics Institute, Millennium Prize rules',
+        url: 'https://www.claymath.org/millennium-problems/rules/',
+      },
+      {
+        title: 'Tristan Buckmaster, statement of 8 September 2026',
+        url: 'https://cims.nyu.edu/~tristanb/statement.pdf',
+      },
+      {
+        title: 'Bastounis, Circelli and Hansen, Navier-Stokes lost in translation (arXiv, 6 October 2026)',
+        url: 'https://arxiv.org/abs/2610.08144',
+      },
+      {
+        title: 'Navier–Stokes priority controversy (Wikipedia, secondary)',
+        url: 'https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_priority_controversy',
+      },
+    ],
   },
 ];

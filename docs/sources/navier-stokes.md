@@ -88,6 +88,12 @@ So the breakdown alternatives allow a force, while the smoothness alternatives d
   https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_priority_controversy
 - **Washington Post coverage, 2026-09-09:** named in spec §8 but not read here.
 
+## Background used on the page (general reference, **S**)
+
+- Navier and Stokes wrote the equations in the 1800s.
+- Clay offered the seven Millennium Prizes in 2000, $1 million each.
+- Only the Poincaré conjecture has been accepted as settled.
+
 ## What the page must say (CLAUDE.md Reporting Accuracy)
 
 - It is the **forced** version: alternatives (C) and (D), with a force allowed.

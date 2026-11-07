@@ -50,7 +50,7 @@ test('labelText and confirmed come through for every lesson', () => {
   const p = pathModel(LESSONS);
   assert.equal(p[0].labelText, 'Refereed');
   assert.equal(p[3].labelText, 'Unverified claim');
-  assert.equal(p[3].confirmed, false);
+  assert.equal(p[3].confirmed, true); // P4: confirmed against primary sources (docs/sources/navier-stokes.md)
 });
 
 test('lesson-header.js imports in Node without touching the DOM', async () => {

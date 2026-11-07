@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navier–Stokes Claim</title>
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<main class="wrap lesson">
+  <nav id="lesson-nav" aria-label="Lesson navigation"></nav>
+
+  <h1>Navier–Stokes (forced version)</h1>
+  <p class="sub">A Millennium Prize claim from OpenAI, made in September 2026 and not yet verified.</p>
+
+  <section id="trust" aria-label="How sure anyone is"></section>
+
+  <section id="question">
+    <h2>The question, in plain words</h2>
+    <p>Water, air, honey and smoke are all <b>fluids</b>. In the 1800s, Claude-Louis
+      Navier and George Stokes wrote down the rules for how a fluid moves: at every point,
+      how fast it's going and how that speed changes from one moment to the next. Those
+      rules are the <b>Navier–Stokes equations</b>. Engineers use them every day to
+      design planes and predict weather.</p>
+    <p>Here's the puzzle. Start with a smooth, gentle flow, like a slowly stirred cup of
+      tea. Does it stay smooth forever? Or can the swirls tighten so fast that, at some
+      moment, the speed at one point becomes <b>infinite</b>? Mathematicians call that a
+      <b>blow-up</b>. A real fluid can't do that, so a blow-up would mean the equations
+      stop describing reality at that point.</p>
+
+    <h3>The Millennium Prize</h3>
+    <p>In 2000 the Clay Mathematics Institute offered $1 million for settling this, one of
+      seven "Millennium Prize" problems. The official statement allows four ways to win:</p>
+    <ul>
+      <li><b>Show it always stays smooth</b>, with nothing pushing on the fluid (two
+        versions: open space and a repeating box). These are statements A and B.</li>
+      <li><b>Show it can break down.</b> Here a smooth outside push is allowed: a
+        <b>force</b>, like a gentle fan or a spoon that stirs for a while and then stops.
+        These are statements C and D.</li>
+    </ul>
+    <p>"Forced" just means that outside push is part of the setup.</p>
+
+    <h3>Why it's hard</h3>
+    <p>Energy in a fluid can pour into smaller and smaller swirls. A computer can follow
+      swirls down to some size, but a blow-up happens at a single point, smaller than any
+      computer can see. So you can't just simulate it: you need an argument that covers
+      every possible flow, or builds one exact flow that provably breaks.</p>
+  </section>
+
+  <section id="found">
+    <h2>What was claimed</h2>
+    <p>On 8 September 2026, <b>OpenAI</b> published a 165-page paper, <i>Finite Time
+      Blowup for Navier–Stokes</i>, produced with an unreleased internal AI model. It
+      <b>claims</b> to build a fluid that starts completely still, is pushed by a smooth
+      force that acts only in a small region and for a limited time, and reaches
+      <b>infinite speed in a finite time</b>, while its total energy stays bounded. It
+      claims this holds for every thickness of fluid, and that it settles statements C
+      and D: the <b>forced</b> versions.</p>
+    <p>OpenAI also published a version written in <b>Lean</b>, a programming language for
+      proofs where a small trusted program checks every step, and a separate claim about
+      the Euler equations (a fluid with no thickness at all), with no force.</p>
+    <p class="sub">Without a push, the question (statements A and B) is untouched by this
+      claim and still completely open.</p>
+
+    <h3>Who got there first is disputed</h3>
+    <p>The same day, mathematicians <b>Tristan Buckmaster</b> (NYU) and <b>Levent
+      Alpöge</b> released their own results: blow-ups with a smooth force for three
+      related fluid equations, including the 3D Euler equations. Buckmaster's statement
+      says they had those results on 15 August and checked them in Lean on 22 August,
+      credits the basic idea to Diego Córdoba and Luis Martínez-Zoroa, and says they used
+      several AI models, including OpenAI's own Codex.</p>
+    <p>Buckmaster has said OpenAI learned of their progress before announcing. OpenAI
+      says its work is independent and that his use of its tools could not have
+      influenced its result. Both sides are still telling different stories.</p>
+  </section>
+
+  <section id="check">
+    <h2>Can anyone check it yet?</h2>
+    <p>Not yet. Unlike Euler's equation, there's no single example you can add up.</p>
+    <p><b>The Lean version helps, but it isn't the end.</b> Lean confirms that every step
+      of the computer version follows from the last. People outside OpenAI have rebuilt
+      it, and the checker accepts it. But Lean only checks what was typed into it. On
+      6 October, Bastounis, Circelli and Hansen argued that OpenAI's Lean version doesn't
+      match its written paper step by step. Whether the Lean statement says exactly what
+      the paper and the prize mean is a job for human experts.</p>
+    <p><b>Experts need time.</b> It's 165 pages of new argument. The Clay Institute's
+      rules say a solution is considered only after it's published, at least <b>two
+      years</b> have passed, and the mathematical community generally accepts it. On
+      11 September the Institute said the problem "has apparently been settled" and that
+      its process "is deliberately unhurried".</p>
+    <p>There's no picture here on purpose. A drawing of swirling water would suggest we
+      understand the construction, and we don't yet.</p>
+  </section>
+
+  <section id="key-idea" data-pending="session">
+    <h2>The key idea</h2>
+    <p class="pending">We'll work this out together in a session.</p>
+  </section>
+
+  <section id="why">
+    <h2>Why it matters</h2>
+    <p><b>It's a Millennium Prize problem.</b> Only one of the seven (the Poincaré
+      conjecture) has ever been accepted as settled. If this claim holds up, an AI system
+      will have produced the core of an argument at that level.</p>
+    <p><b>It's a test of how we trust AI proofs.</b> The Lean check and the written paper
+      say slightly different things, and that gap is exactly what experts are now
+      arguing about.</p>
+  </section>
+
+  <section id="open">
+    <h2>What's still open</h2>
+    <p>Whether the claim is right. Whether the Lean version matches the written argument.
+      Who deserves credit. And the version most people mean when they say "Navier–Stokes":
+      with no push at all, does a smooth flow always stay smooth?</p>
+  </section>
+
+  <section id="sources">
+    <h2>Sources</h2>
+    <ul id="source-list"></ul>
+  </section>
+
+  <nav class="lesson-nav bottom" aria-label="Lesson navigation"></nav>
+</main>
+
+<script src="../results.js"></script>
+<script src="../lessons.js"></script>
+<script src="../lesson-model.js"></script>
+<script src="../lesson-header.js"></script>
+<script>
+  renderLessonHeader('navier-stokes');
+
+  const list = document.getElementById('source-list');
+  for (const s of globalThis.LESSONS.find((l) => l.slug === 'navier-stokes').sources) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = s.url;
+    a.rel = 'noreferrer';
+    a.textContent = s.title;
+    li.appendChild(a);
+    list.appendChild(li);
+  }
+</script>
+</body>
+</html>
