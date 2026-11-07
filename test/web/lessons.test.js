@@ -43,7 +43,7 @@ test('prev/next skip unavailable lessons; ends have none', () => {
   assert.equal(lessonHeaderModel(lessons, undefined, 'euler').prev, null);
   assert.equal(lessonHeaderModel(lessons, undefined, 'navier-stokes').next, null);
   assert.equal(lessonHeaderModel(lessons, undefined, 'euler').next.href, 'jacobian.html');
-  assert.equal(lessonHeaderModel(LESSONS, undefined, 'euler').next, null); // P1: the rest are unavailable
+  assert.equal(lessonHeaderModel(LESSONS, undefined, 'euler').next.href, 'sendov.html'); // P4: Jacobian still unavailable
 });
 
 test('labelText and confirmed come through for every lesson', () => {

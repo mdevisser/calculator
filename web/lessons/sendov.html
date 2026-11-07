@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sendov's Conjecture</title>
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<main class="wrap lesson">
+  <nav id="lesson-nav" aria-label="Lesson navigation"></nav>
+
+  <h1>Sendov's conjecture</h1>
+  <p class="sub">A 68-year-old guess about roots and flat spots, now proved with AI and checked by computer.</p>
+
+  <section id="trust" aria-label="How sure anyone is"></section>
+
+  <section id="question">
+    <h2>The question, in plain words</h2>
+    <p>Start with a simple recipe for turning a number into another number:
+      <b>square it, then subtract 1</b>. Mathematicians write that as
+      <code>p(x) = x² − 1</code>. Feed it 3 and you get 3 × 3 − 1 = 8.</p>
+    <p>A <b>root</b> is a number the recipe turns into zero. Here there are two:
+      1 (because 1 × 1 − 1 = 0) and −1 (because −1 × −1 − 1 = 0).</p>
+    <p>Draw the recipe as a curve and it dips below the ground between those two roots,
+      then comes back up. Somewhere in between, at 0, it is perfectly <b>flat</b>: the
+      bottom of the valley. That isn't luck. Between any two roots there is always a flat
+      spot. That has been known since the 1690s.</p>
+
+    <h3>Moving from a line to a map</h3>
+    <p>Mathematicians also use numbers that are points on a flat map, not just on a line.
+      (They're called <i>complex numbers</i>; you won't need anything about them except
+      that each one is a point.) A recipe like <code>x² − 1</code> still has roots on the
+      map, and it still has flat spots: points where the recipe stops changing for a
+      moment.</p>
+
+    <h3>Sendov's guess (around 1958)</h3>
+    <p>Blagovest Sendov, a Bulgarian mathematician, guessed:</p>
+    <div class="callout">
+      Put all of a recipe's roots inside a circle of radius 1. Then <b>every root has a
+      flat spot within distance 1 of it.</b>
+    </div>
+    <p>Our example sits right on the edge: roots at 1 and −1, flat spot at 0, and each
+      root is <b>exactly</b> 1 away. So the guess, if true, can't be improved.</p>
+
+    <h3>Why nobody could settle it</h3>
+    <p>It's a claim about <i>every</i> recipe, with any number of roots, placed
+      <i>anywhere</i> in the circle. Mathematicians proved it for recipes with up to 8
+      roots, and in 2020 Terence Tao proved it for recipes with a very large number of
+      roots. Everything in between stayed open.</p>
+  </section>
+
+  <section id="found">
+    <h2>What was found</h2>
+    <p>In early August 2026, <b>Lech Mazur</b> posted <i>A Computer-Assisted Proof of
+      Sendov's Conjecture</i> (dated 5 August), covering every recipe with 2 or more
+      roots. His paper says the AI system <b>OpenAI GPT-5.6 Pro</b> played "a
+      substantial role in the discovery and derivation of the mathematics". Mazur
+      directed it, chose and reconciled its output, and takes responsibility for the
+      claims.</p>
+    <p>The proof was also written in <b>Lean</b>, a programming language for proofs. In
+      Lean, every single step has to be justified, and a small, trusted checking program
+      confirms the whole thing. If even one step is missing, it refuses.</p>
+    <p>On 12 August, <b>Terence Tao</b>, one of the world's leading mathematicians,
+      published a "digestion" of the proof. He simplified it, proved a slightly stronger
+      statement, and re-checked it in Lean with an AI agent's help: about 15,000 lines,
+      down from about 90,000. His Lean version states Sendov's conjecture in full, with no
+      gaps left to fill.</p>
+    <p class="sub">Not yet in a peer-reviewed journal. Mazur notes that the Lean check
+      proves the theorem but doesn't follow his written paper line by line.</p>
+  </section>
+
+  <section id="check">
+    <h2>See it for yourself</h2>
+    <p>Drag the <b class="sv-key-root">blue roots</b> anywhere inside the circle (or
+      click one and use the arrow keys). The <b class="sv-key-spot">orange squares</b>
+      are the flat spots. Each root has a line to its nearest flat spot. Try to make a
+      line longer than 1. You can't.</p>
+    <div class="sv-wrap">
+      <svg id="sv" viewBox="-1.35 -1.35 2.7 2.7" role="img"
+        aria-label="Roots and flat spots inside a circle of radius 1"></svg>
+      <div>
+        <ol id="sv-readout" class="sv-readout" aria-live="polite"></ol>
+        <button type="button" id="sv-reset">Reset</button>
+      </div>
+    </div>
+    <p class="sub">This picture uses rounded math, fine for seeing, not proof. The proof
+      is the part Lean checked.</p>
+  </section>
+
+  <section id="key-idea" data-pending="session">
+    <h2>The key idea</h2>
+    <p class="pending">We'll work this out together in a session.</p>
+  </section>
+
+  <section id="why">
+    <h2>Why it matters</h2>
+    <p><b>It's a proof, not a counterexample.</b> Euler's guess fell to a single example
+      anyone can check. Here there's no example to point at: the claim covers infinitely
+      many cases, and the trust comes from the computer check and from Tao's
+      reading.</p>
+    <p><b>An AI did a large share of the mathematics.</b> A person directed it and takes
+      responsibility for it, but the paper says the AI's part went well beyond
+      tidying up the writing.</p>
+  </section>
+
+  <section id="open">
+    <h2>What's still open</h2>
+    <p>The result hasn't been through peer review yet. Tao's digestion is the first
+      step to understanding <i>why</i> it's true, not just <i>that</i> it is, and that is
+      what the key idea above is for.</p>
+  </section>
+
+  <section id="sources">
+    <h2>Sources</h2>
+    <ul id="source-list"></ul>
+  </section>
+
+  <nav class="lesson-nav bottom" aria-label="Lesson navigation"></nav>
+</main>
+
+<script src="../results.js"></script>
+<script src="../lessons.js"></script>
+<script src="../lesson-model.js"></script>
+<script src="../lesson-header.js"></script>
+<script src="./sendov-picture.js"></script>
+<script>
+  renderLessonHeader('sendov');
+
+  const list = document.getElementById('source-list');
+  for (const s of globalThis.LESSONS.find((l) => l.slug === 'sendov').sources) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = s.url;
+    a.rel = 'noreferrer';
+    a.textContent = s.title;
+    li.appendChild(a);
+    list.appendChild(li);
+  }
+
+  // The picture. Math y points up; SVG y points down, so y is flipped on screen.
+  const NS = 'http://www.w3.org/2000/svg';
+  const START = [[0.6, 0.5], [-0.7, 0.3], [0.1, -0.8], [0.5, -0.2]];
+  let roots = START.map((r) => r.slice());
+  const svg = document.getElementById('sv');
+  const shape = (tag, attrs, cls) => {
+    const n = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    if (cls) n.setAttribute('class', cls);
+    return n;
+  };
+
+  svg.appendChild(shape('circle', { cx: 0, cy: 0, r: 1 }, 'sv-disk'));
+  const layer = shape('g', {});
+  svg.appendChild(layer);
+  const dots = roots.map((_, i) => {
+    const d = shape('circle', { r: 0.075, tabindex: 0 }, 'sv-root');
+    d.setAttribute('aria-label', `Root ${i + 1}. Use arrow keys to move.`);
+    d.addEventListener('keydown', (e) => {
+      const step = { ArrowLeft: [-0.05, 0], ArrowRight: [0.05, 0], ArrowUp: [0, 0.05], ArrowDown: [0, -0.05] }[e.key];
+      if (!step) return;
+      e.preventDefault();
+      roots[i] = sendov.clampToDisk([roots[i][0] + step[0], roots[i][1] + step[1]]);
+      draw();
+    });
+    svg.appendChild(d);
+    return d;
+  });
+
+  const readout = document.getElementById('sv-readout');
+  function draw() {
+    const spots = sendov.flatSpots(roots);
+    layer.replaceChildren();
+    const lines = [];
+    roots.forEach((r, i) => {
+      let best = null;
+      let bestD = Infinity;
+      for (const s of spots) {
+        const d = Math.hypot(r[0] - s[0], r[1] - s[1]);
+        if (d < bestD) { bestD = d; best = s; }
+      }
+      if (best) {
+        layer.appendChild(shape('line', { x1: r[0], y1: -r[1], x2: best[0], y2: -best[1] },
+          bestD <= 1 + 1e-9 ? 'sv-line' : 'sv-line far'));
+      }
+      lines.push(Number.isFinite(bestD) ? bestD : null);
+      dots[i].setAttribute('cx', r[0]);
+      dots[i].setAttribute('cy', -r[1]);
+    });
+    for (const s of spots) {
+      layer.appendChild(shape('rect', { x: s[0] - 0.045, y: -s[1] - 0.045, width: 0.09, height: 0.09 }, 'sv-spot'));
+    }
+    readout.replaceChildren();
+    lines.forEach((d, i) => {
+      const li = document.createElement('li');
+      li.textContent = d === null
+        ? `Root ${i + 1}: no flat spot found`
+        : `Root ${i + 1}: nearest flat spot ${d.toFixed(2)} away${d <= 1 + 1e-9 ? ', within 1' : ''}`;
+      readout.appendChild(li);
+    });
+  }
+
+  let dragging = -1;
+  const toMath = (e) => {
+    const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+    return [p.x, -p.y];
+  };
+  svg.addEventListener('pointerdown', (e) => {
+    const z = toMath(e);
+    let best = -1;
+    let bestD = 0.2;
+    roots.forEach((r, i) => {
+      const d = Math.hypot(r[0] - z[0], r[1] - z[1]);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    if (best < 0) return;
+    dragging = best;
+    svg.setPointerCapture(e.pointerId);
+    dots[best].focus();
+  });
+  svg.addEventListener('pointermove', (e) => {
+    if (dragging < 0) return;
+    roots[dragging] = sendov.clampToDisk(toMath(e));
+    draw();
+  });
+  const stop = () => { dragging = -1; };
+  svg.addEventListener('pointerup', stop);
+  svg.addEventListener('pointercancel', stop);
+
+  document.getElementById('sv-reset').addEventListener('click', () => {
+    roots = START.map((r) => r.slice());
+    draw();
+  });
+  draw();
+</script>
+</body>
+</html>

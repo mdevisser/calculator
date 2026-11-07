@@ -63,13 +63,27 @@ globalThis.LESSONS = [
     blurb: 'First real proof, computer-checked',
     position: 3,
     kind: 'proof',
-    available: false,
+    available: true,
     announced: 'August 2026',
     claimants: 'Lech Mazur, with OpenAI GPT-5.6 Pro; digested by Terence Tao',
     label: 'computer-checked',
-    confirmed: false,
+    confirmed: true, // docs/sources/sendov.md: full statement in Lean, no sorry, standard axioms only
     checkedHere: null,
-    sources: [AI_DISCOVERIES],
+    sources: [
+      {
+        title: 'Lech Mazur, A Computer-Assisted Proof of Sendov\'s Conjecture (5 August 2026)',
+        url: 'https://www.proofatlas.ai/papers/sendov-conjecture/SENDOV_CONJECTURE_PROOF_AUGUST_5_2026.pdf',
+      },
+      {
+        title: 'Terence Tao, A digestion of the proof of Sendov\'s conjecture (12 August 2026)',
+        url: 'https://terrytao.wordpress.com/2026/08/12/a-digestion-of-the-proof-of-sendovs-conjecture/',
+      },
+      {
+        title: 'teorth/sendov: Lean formalization of Sendov\'s conjecture',
+        url: 'https://github.com/teorth/sendov',
+      },
+      AI_DISCOVERIES,
+    ],
   },
   {
     slug: 'navier-stokes',

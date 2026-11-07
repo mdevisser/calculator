@@ -103,3 +103,17 @@ a.path-step:hover { border-color:var(--accent); }
 .news-empty { color:var(--ink-3); font-style:italic; }
 .news-checked { font:500 .75rem/1.6 var(--mono); color:var(--ink-3); margin:.5rem 0 0; }
 .byline { font-size:.8125rem; color:var(--ink-3); }
+
+/* Sendov drag-the-dots picture */
+.sv-wrap { display:flex; flex-wrap:wrap; gap:1rem 1.5rem; align-items:flex-start; margin:1rem 0; }
+#sv { width:340px; max-width:100%; touch-action:none; background:var(--surface); border:1px solid var(--rule); border-radius:4px; }
+.sv-disk { fill:var(--paper); stroke:var(--accent); stroke-width:.012; }
+.sv-root { fill:var(--accent); cursor:grab; }
+.sv-root:focus { outline:none; stroke:var(--ink); stroke-width:.025; }
+.sv-spot { fill:var(--warn); }
+.sv-line { stroke:var(--ok); stroke-width:.018; }
+.sv-line.far { stroke:var(--bad); }
+.sv-key-root { color:var(--accent); }
+.sv-key-spot { color:var(--warn); }
+.sv-readout { font:.875rem/1.8 var(--mono); margin:0 0 .75rem; padding-left:1.25rem; }
+#sv-reset { font:inherit; padding:.3rem .8rem; border:1px solid var(--rule); border-radius:3px; background:var(--surface); color:var(--ink); cursor:pointer; }
